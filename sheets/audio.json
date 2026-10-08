@@ -1,0 +1,22 @@
+{
+  "sheet": "audio",
+  "about": "ULTRAKILL sounds and music the helper plays, read from the player's own ULTRAKILL install ({game:ultrakill}/ULTRAKILL_Data/StreamingAssets/aa/StandaloneWindows64). The helper writes every AudioClip name it finds to clip-index.txt; match is a case-insensitive regex over those names, tried in order. Nothing from ULTRAKILL is shipped.",
+  "columns": {
+    "id":        {"type": "string", "desc": "Row id"},
+    "kind":      {"type": "enum:sfx|music", "desc": "Sound effect or music layer"},
+    "bundles":   {"type": "string", "desc": "File glob of bundles to search"},
+    "match":     {"type": "list",   "desc": "Regexes over clip names, first that matches wins"},
+    "volume":    {"type": "number", "desc": "0..1"},
+    "verified":  {"type": "bool",   "desc": "Clip name confirmed in a real clip-index.txt"},
+    "note":      {"type": "string", "desc": "Why this clip"}
+  },
+  "rows": [
+    {"id": "sfx_rank_up",        "kind": "sfx",   "bundles": "*.bundle",          "match": ["(?i)style.*(up|gain)", "(?i)rank.*up", "(?i)^ding", "(?i)coin"], "volume": 0.8, "verified": false, "note": "ULTRAKILL has no built-in per-rank sound (mods add one); pick a real UI/reward clip from clip-index.txt"},
+    {"id": "sfx_rank_up_high",   "kind": "sfx",   "bundles": "*.bundle",          "match": ["(?i)final.?rank", "(?i)rank.*(s|reveal)", "(?i)parry"], "volume": 0.9, "verified": false, "note": "a punchier real clip for S and above; the end-of-level rank sound is the first choice"},
+    {"id": "sfx_rank_ultrakill", "kind": "sfx",   "bundles": "*.bundle",          "match": ["(?i)p.?rank", "(?i)final.?rank", "(?i)parry"], "volume": 1.0, "verified": false, "note": "the P-rank reveal if present"},
+    {"id": "sfx_rank_down",      "kind": "sfx",   "bundles": "*.bundle",          "match": ["(?i)(hurt|damage).*(v1|player)", "(?i)whiplash.*(break|miss)", "(?i)error"], "volume": 0.6, "verified": false, "note": "a real 'lost it' clip"},
+    {"id": "sfx_mode_switch",    "kind": "sfx",   "bundles": "*.bundle",          "match": ["(?i)weapon.?switch", "(?i)(revolver|pistol).*(spin|switch)", "(?i)click"], "volume": 0.7, "verified": false, "note": "weapon-variation switch click"},
+    {"id": "music_clean",        "kind": "music", "bundles": "music_assets*.bundle", "match": ["(?i)clean"], "volume": 0.9, "verified": false, "note": "ULTRAKILL levels ship a calm 'clean' and an intense 'battle' version of each track; the helper pairs them by shared name"},
+    {"id": "music_battle",       "kind": "music", "bundles": "music_assets*.bundle", "match": ["(?i)battle"], "volume": 1.0, "verified": false, "note": "battle half of the same pair"}
+  ]
+}

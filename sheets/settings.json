@@ -1,0 +1,28 @@
+{
+  "sheet": "settings",
+  "about": "Tunables and file paths shared by the Lua mod and the audio helper. {localappdata} is the player's %LOCALAPPDATA%.",
+  "columns": {
+    "id":    {"type": "string", "desc": "Key"},
+    "value": {"type": "any",    "desc": "Value"},
+    "desc":  {"type": "string", "desc": "What it does"}
+  },
+  "rows": [
+    {"id": "hotkey_mode",        "value": "F7",  "desc": "Cycle Clean → ULTRAKILL Rules → Power"},
+    {"id": "hotkey_hud",         "value": "F8",  "desc": "Show or hide the meter"},
+    {"id": "hotkey_recon",       "value": "F10", "desc": "Write classes, hook results and penalty functions to UE4SS.log"},
+    {"id": "poll_ms",            "value": 100,   "desc": "How often the mod reads the game"},
+    {"id": "fire_window_s",      "value": 0.8,   "desc": "A death this soon after the player fired counts as theirs"},
+    {"id": "aim_cone_deg",       "value": 10,    "desc": "Victim must be this close to the crosshair to be the player's kill"},
+    {"id": "headshot_cone_deg",  "value": 2.5,   "desc": "Head this close to the crosshair = headshot"},
+    {"id": "player_reach_cm",    "value": 350,   "desc": "Arrests/takedowns closer than this are the player's"},
+    {"id": "multikill_window_s", "value": 1.5,   "desc": "Kills this close together are a multikill"},
+    {"id": "chain_window_s",     "value": 4.0,   "desc": "Neutralizations this close together are a fast clear"},
+    {"id": "style_cap",          "value": 2400,  "desc": "Meter maximum"},
+    {"id": "feed_lines",         "value": 5,     "desc": "Lines kept in the HUD feed"},
+    {"id": "data_dir",           "value": "{localappdata}/RoNUltrakill", "desc": "Folder for settings.cfg, events.log, clip-index.txt, logs"},
+    {"id": "settings_file",      "value": "{localappdata}/RoNUltrakill/settings.cfg", "desc": "Melty writes ULTRAKILL_DIR here before every Play"},
+    {"id": "events_file",        "value": "{localappdata}/RoNUltrakill/events.log", "desc": "Lua appends, helper tails"},
+    {"id": "heartbeat_file",     "value": "{localappdata}/RoNUltrakill/helper.alive", "desc": "Helper touches it every second"},
+    {"id": "game_process",       "value": "ReadyOrNot-Win64-Shipping", "desc": "Helper exits when this process is gone"}
+  ]
+}

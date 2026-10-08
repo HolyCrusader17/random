@@ -1,0 +1,9 @@
+dist/
+helper/UKAudio/bin/
+helper/UKAudio/obj/
+*.user
+# never commit game files or extracted audio
+extracted/
+*.bundle
+*.wav
+*.ogg

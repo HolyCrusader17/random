@@ -1,0 +1,40 @@
+{
+  "sheet": "hooks",
+  "about": "Every place the mod reads or changes Ready or Not. kind=engine means stock Unreal Engine / UE4SS API (present in every UE game); kind=game means Ready or Not's own classes, whose names come from candidates tried in order at runtime and logged when one answers. verified=true only after it has been seen working in the running game (UE4SS.log line '[RoNUK] hook <id> ok via <name>').",
+  "columns": {
+    "id":          {"type": "string", "desc": "Row id"},
+    "kind":        {"type": "enum:engine|game|ue4ss", "desc": "Where the name comes from"},
+    "method":      {"type": "enum:find_all|call|property|call_or_property|keybind|socket|recon", "desc": "How the mod uses it"},
+    "target":      {"type": "string", "desc": "Object it is read on"},
+    "candidates":  {"type": "list",   "desc": "Names tried in order (functions, properties, class-name fragments, sockets or keys)"},
+    "used_by":     {"type": "string", "desc": "Feature that needs it"},
+    "implemented": {"type": "bool",   "desc": "Code exists for it in this build"},
+    "verified":    {"type": "bool",   "desc": "Seen working in the running game"},
+    "source":      {"type": "string", "desc": "Where the names came from"}
+  },
+  "rows": [
+    {"id": "characters",          "kind": "engine", "method": "find_all",         "target": "world",               "candidates": ["Character"], "used_by": "every character-state event", "implemented": true, "verified": false, "source": "UE4SS FindAllOf on the engine base class ACharacter"},
+    {"id": "class_suspect",       "kind": "game",   "method": "recon",            "target": "Character class name","candidates": ["Suspect", "Cybernetic", "Enemy", "Hostile"], "used_by": "kill / arrest / level_clear classification", "implemented": true, "verified": false, "source": "guess; the mod logs every Character class it meets so the list can be corrected"},
+    {"id": "class_civilian",      "kind": "game",   "method": "recon",            "target": "Character class name","candidates": ["Civilian", "Hostage", "Innocent"], "used_by": "unauthorized_kill", "implemented": true, "verified": false, "source": "guess; corrected from the class log"},
+    {"id": "class_swat",          "kind": "game",   "method": "recon",            "target": "Character class name","candidates": ["SWAT", "Swat", "Officer", "PlayerCharacter"], "used_by": "ignore squad mates", "implemented": true, "verified": false, "source": "guess; corrected from the class log"},
+    {"id": "state_dead",          "kind": "game",   "method": "call_or_property", "target": "Character",           "candidates": ["IsDeadNotUnconscious", "IsDead", "bIsDead", "bDead"], "used_by": "kill, multikill, unauthorized_kill", "implemented": true, "verified": false, "source": "guess; fallback is health_props <= 0"},
+    {"id": "state_arrested",      "kind": "game",   "method": "call_or_property", "target": "Character",           "candidates": ["IsArrested", "bIsArrested", "bArrested"], "used_by": "arrest, squad_arrest, fast_clear", "implemented": true, "verified": false, "source": "guess"},
+    {"id": "state_surrendered",   "kind": "game",   "method": "call_or_property", "target": "Character",           "candidates": ["IsSurrendered", "bIsSurrendered", "bSurrendered"], "used_by": "compliance, unauthorized_kill", "implemented": true, "verified": false, "source": "guess"},
+    {"id": "state_incapacitated", "kind": "game",   "method": "call_or_property", "target": "Character",           "candidates": ["IsIncapacitated", "bIsIncapacitated", "bIncapacitated"], "used_by": "takedown", "implemented": true, "verified": false, "source": "guess"},
+    {"id": "health_props",        "kind": "game",   "method": "property",         "target": "Character",           "candidates": ["Health", "CurrentHealth"], "used_by": "state_dead fallback, player_health", "implemented": true, "verified": false, "source": "guess"},
+    {"id": "player_health",       "kind": "game",   "method": "property",         "target": "player Pawn",         "candidates": ["Health", "CurrentHealth"], "used_by": "hit_taken, power_absorb_hit", "implemented": true, "verified": false, "source": "same names as health_props, read on the player"},
+    {"id": "player",              "kind": "engine", "method": "call",             "target": "UEHelpers",           "candidates": ["GetPlayerController"], "used_by": "everything", "implemented": true, "verified": false, "source": "game_info: UEHelpers.GetPlayerController(), .Pawn"},
+    {"id": "camera",              "kind": "engine", "method": "call",             "target": "PlayerCameraManager", "candidates": ["GetCameraLocation", "GetCameraRotation"], "used_by": "aim attribution", "implemented": true, "verified": false, "source": "game_info camera notes"},
+    {"id": "fire_input",          "kind": "engine", "method": "call",             "target": "PlayerController",    "candidates": ["IsInputKeyDown:LeftMouseButton", "IsInputKeyDown:Gamepad_RightTrigger"], "used_by": "kill / takedown attribution", "implemented": true, "verified": false, "source": "APlayerController::IsInputKeyDown (engine)"},
+    {"id": "aim_head",            "kind": "engine", "method": "socket",           "target": "Character.Mesh",      "candidates": ["head", "Head", "neck_01"], "used_by": "headshot", "implemented": true, "verified": false, "source": "UE mannequin bone names; check the log"},
+    {"id": "server_clock",        "kind": "engine", "method": "call",             "target": "GameStateBase",       "candidates": ["GetServerWorldTimeSeconds"], "used_by": "all timing (shared clock, ready for co-op)", "implemented": true, "verified": false, "source": "game_info players notes"},
+    {"id": "map_name",            "kind": "engine", "method": "call",             "target": "GameplayStatics",     "candidates": ["GetCurrentLevelName"], "used_by": "mission start/end, level_clear reset", "implemented": true, "verified": false, "source": "game_info players notes"},
+    {"id": "move_speed",          "kind": "engine", "method": "property",         "target": "Pawn.CharacterMovement", "candidates": ["MaxWalkSpeed"], "used_by": "power_move_mult", "implemented": true, "verified": false, "source": "UCharacterMovementComponent (engine)"},
+    {"id": "anim_rate",           "kind": "engine", "method": "property",         "target": "Pawn.Mesh",           "candidates": ["GlobalAnimRateScale"], "used_by": "power_anim_mult (reload speed)", "implemented": true, "verified": false, "source": "USkeletalMeshComponent (engine); RoN may use separate first-person arms, check the log"},
+    {"id": "hud_widget",          "kind": "engine", "method": "call",             "target": "UMG",                 "candidates": ["/Script/UMG.UserWidget", "/Script/UMG.WidgetTree", "/Script/UMG.CanvasPanel", "/Script/UMG.TextBlock", "/Script/UMG.ProgressBar"], "used_by": "the meter", "implemented": true, "verified": false, "source": "StaticConstructObject of stock UMG classes, no editor"},
+    {"id": "key_mode",            "kind": "ue4ss",  "method": "keybind",          "target": "RegisterKeyBind",     "candidates": ["F7"], "used_by": "mode switch", "implemented": true, "verified": false, "source": "settings.hotkey_mode"},
+    {"id": "key_hud",             "kind": "ue4ss",  "method": "keybind",          "target": "RegisterKeyBind",     "candidates": ["F8"], "used_by": "show/hide meter", "implemented": true, "verified": false, "source": "settings.hotkey_hud"},
+    {"id": "key_recon",           "kind": "ue4ss",  "method": "keybind",          "target": "RegisterKeyBind",     "candidates": ["F10"], "used_by": "dump classes and penalty functions to UE4SS.log", "implemented": true, "verified": false, "source": "settings.hotkey_recon"},
+    {"id": "penalty_suppress",    "kind": "game",   "method": "recon",            "target": "UFunction names",     "candidates": ["Penalt", "Unauthori", "ROE"], "used_by": "modes.suppress_ron_penalties", "implemented": false, "verified": false, "source": "unknown until the F10 recon lists Ready or Not's penalty functions; v1 logs them only"}
+  ]
+}

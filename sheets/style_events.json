@@ -1,0 +1,180 @@
+{
+  "sheet": "style_events",
+  "about": "Everything that moves the meter. One event fires per detection; points_<mode> is what it gives in that mode (negative takes away). on_hit decides what else happens. When an effect is set, it replaces the points: drop_to_d empties the meter, drop_one_rank puts it halfway into the rank below.",
+  "columns": {
+    "id": {
+      "type": "string",
+      "desc": "Row id"
+    },
+    "feed_text": {
+      "type": "string",
+      "desc": "Line in the HUD feed, ULTRAKILL style"
+    },
+    "detect": {
+      "type": "ref:hooks",
+      "desc": "Hook row that detects it"
+    },
+    "rule": {
+      "type": "string",
+      "desc": "Exactly when it fires"
+    },
+    "points_clean": {
+      "type": "int",
+      "desc": "Style in Clean mode"
+    },
+    "points_ultrakill": {
+      "type": "int",
+      "desc": "Style in ULTRAKILL Rules mode"
+    },
+    "points_power": {
+      "type": "int",
+      "desc": "Style in Power mode"
+    },
+    "effect_clean": {
+      "type": "enum:none|drop_to_d|drop_one_rank",
+      "desc": "Extra effect in Clean"
+    },
+    "effect_ultrakill": {
+      "type": "enum:none|drop_to_d|drop_one_rank",
+      "desc": "Extra effect in ULTRAKILL Rules"
+    },
+    "effect_power": {
+      "type": "enum:none|drop_to_d|drop_one_rank",
+      "desc": "Extra effect in Power"
+    }
+  },
+  "rows": [
+    {
+      "id": "arrest",
+      "feed_text": "+ARRESTED",
+      "detect": "state_arrested",
+      "rule": "a suspect or civilian becomes arrested within settings.player_reach_cm of the player",
+      "points_clean": 150,
+      "points_ultrakill": 20,
+      "points_power": 120,
+      "effect_clean": "none",
+      "effect_ultrakill": "none",
+      "effect_power": "none"
+    },
+    {
+      "id": "squad_arrest",
+      "feed_text": "+SQUAD CUFFS",
+      "detect": "state_arrested",
+      "rule": "an arrest happens farther than settings.player_reach_cm from the player (the AI squad did it)",
+      "points_clean": 40,
+      "points_ultrakill": 0,
+      "points_power": 30,
+      "effect_clean": "none",
+      "effect_ultrakill": "none",
+      "effect_power": "none"
+    },
+    {
+      "id": "compliance",
+      "feed_text": "+COMPLIANCE",
+      "detect": "state_surrendered",
+      "rule": "a suspect surrenders while the player can see them (inside settings.aim_cone_deg x3)",
+      "points_clean": 40,
+      "points_ultrakill": 0,
+      "points_power": 30,
+      "effect_clean": "none",
+      "effect_ultrakill": "none",
+      "effect_power": "none"
+    },
+    {
+      "id": "takedown",
+      "feed_text": "+SUBDUED",
+      "detect": "state_incapacitated",
+      "rule": "a suspect becomes incapacitated but not dead, after the player fired at them or within reach",
+      "points_clean": 110,
+      "points_ultrakill": 30,
+      "points_power": 90,
+      "effect_clean": "none",
+      "effect_ultrakill": "none",
+      "effect_power": "none"
+    },
+    {
+      "id": "kill",
+      "feed_text": "+KILL",
+      "detect": "state_dead",
+      "rule": "a suspect who was not surrendered or arrested dies within settings.fire_window_s of the player firing at them",
+      "points_clean": 15,
+      "points_ultrakill": 70,
+      "points_power": 60,
+      "effect_clean": "none",
+      "effect_ultrakill": "none",
+      "effect_power": "none"
+    },
+    {
+      "id": "headshot",
+      "feed_text": "+HEADSHOT",
+      "detect": "aim_head",
+      "rule": "on a kill, the camera was within settings.headshot_cone_deg of the victim's head",
+      "points_clean": 0,
+      "points_ultrakill": 50,
+      "points_power": 40,
+      "effect_clean": "none",
+      "effect_ultrakill": "none",
+      "effect_power": "none"
+    },
+    {
+      "id": "multikill",
+      "feed_text": "+MULTIKILL",
+      "detect": "state_dead",
+      "rule": "a second (or later) kill within settings.multikill_window_s of the last one",
+      "points_clean": 0,
+      "points_ultrakill": 120,
+      "points_power": 100,
+      "effect_clean": "none",
+      "effect_ultrakill": "none",
+      "effect_power": "none"
+    },
+    {
+      "id": "unauthorized_kill",
+      "feed_text": "+UNAUTHORIZED",
+      "detect": "state_dead",
+      "rule": "a civilian, or a suspect who had surrendered or was arrested, dies after the player fired at them",
+      "points_clean": 0,
+      "points_ultrakill": 70,
+      "points_power": 0,
+      "effect_clean": "drop_to_d",
+      "effect_ultrakill": "none",
+      "effect_power": "drop_one_rank"
+    },
+    {
+      "id": "fast_clear",
+      "feed_text": "+FAST CLEAR",
+      "detect": "state_arrested",
+      "rule": "a player arrest or takedown within settings.chain_window_s of the previous one",
+      "points_clean": 90,
+      "points_ultrakill": 0,
+      "points_power": 60,
+      "effect_clean": "none",
+      "effect_ultrakill": "none",
+      "effect_power": "none"
+    },
+    {
+      "id": "level_clear",
+      "feed_text": "+AREA SECURED",
+      "detect": "characters",
+      "rule": "every suspect seen on this map is dead, arrested or incapacitated, and at least one was neutralized while the mod watched (fires once per map)",
+      "points_clean": 400,
+      "points_ultrakill": 250,
+      "points_power": 300,
+      "effect_clean": "none",
+      "effect_ultrakill": "none",
+      "effect_power": "none"
+    },
+    {
+      "id": "hit_taken",
+      "feed_text": "-HURT",
+      "detect": "player_health",
+      "rule": "the player's health goes down",
+      "points_clean": -60,
+      "points_ultrakill": 0,
+      "points_power": 0,
+      "effect_clean": "none",
+      "effect_ultrakill": "drop_one_rank",
+      "effect_power": "drop_one_rank"
+    }
+  ]
+}

@@ -1,0 +1,70 @@
+{
+  "sheet": "modes",
+  "about": "The three modes, cycled with settings.hotkey_mode. How many points each style event gives in each mode is in style_events (points_<mode id>).",
+  "columns": {
+    "id": {
+      "type": "string",
+      "desc": "Row id; style_events has a points_<id> column for it"
+    },
+    "order": {
+      "type": "int",
+      "desc": "Cycle order"
+    },
+    "label": {
+      "type": "string",
+      "desc": "Name on the meter"
+    },
+    "summary": {
+      "type": "string",
+      "desc": "One line shown for 3 s when switching to it"
+    },
+    "suppress_ron_penalties": {
+      "type": "bool",
+      "desc": "Turn off Ready or Not's unauthorized-force penalties (hooks.penalty_suppress)"
+    },
+    "end_score": {
+      "type": "enum:ron|best_rank",
+      "desc": "What the end-of-mission banner reports"
+    },
+    "power_buffs": {
+      "type": "bool",
+      "desc": "Apply ranks.power_* buffs"
+    },
+    "switch_sound": {
+      "type": "ref:audio",
+      "desc": "Clip played when switching to this mode"
+    }
+  },
+  "rows": [
+    {
+      "id": "clean",
+      "order": 0,
+      "label": "CLEAN",
+      "summary": "Arrests, takedowns and fast clears. Unauthorized force drops you to D.",
+      "suppress_ron_penalties": false,
+      "end_score": "ron",
+      "power_buffs": false,
+      "switch_sound": "sfx_mode_switch"
+    },
+    {
+      "id": "ultrakill",
+      "order": 1,
+      "label": "ULTRAKILL RULES",
+      "summary": "Kills, headshots and multi-kills feed the meter. Best rank is your score.",
+      "suppress_ron_penalties": true,
+      "end_score": "best_rank",
+      "power_buffs": false,
+      "switch_sound": "sfx_mode_switch"
+    },
+    {
+      "id": "power",
+      "order": 2,
+      "label": "POWER",
+      "summary": "Everything earns style. Rank makes you faster. ULTRAKILL rank shrugs off a hit.",
+      "suppress_ron_penalties": false,
+      "end_score": "best_rank",
+      "power_buffs": true,
+      "switch_sound": "sfx_mode_switch"
+    }
+  ]
+}

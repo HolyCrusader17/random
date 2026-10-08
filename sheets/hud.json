@@ -1,0 +1,22 @@
+{
+  "sheet": "hud",
+  "about": "Widgets of the style meter, built at runtime from stock UMG classes (no editor). Positions are in viewport units from the top-right corner, ULTRAKILL style.",
+  "columns": {
+    "id":        {"type": "string", "desc": "Row id"},
+    "widget":    {"type": "enum:TextBlock|ProgressBar", "desc": "UMG class"},
+    "shows":     {"type": "enum:rank_letter|rank_name|rank_progress|mode_label|feed|banner", "desc": "What it displays"},
+    "x":         {"type": "int", "desc": "Offset left from the right edge"},
+    "y":         {"type": "int", "desc": "Offset down from the top"},
+    "w":         {"type": "int", "desc": "Width"},
+    "h":         {"type": "int", "desc": "Height"},
+    "font_size": {"type": "int", "desc": "Font size (0 for non-text)"}
+  },
+  "rows": [
+    {"id": "mode",     "widget": "TextBlock",   "shows": "mode_label",    "x": 420, "y": 40,  "w": 380, "h": 28,  "font_size": 16},
+    {"id": "letter",   "widget": "TextBlock",   "shows": "rank_letter",   "x": 420, "y": 66,  "w": 380, "h": 90,  "font_size": 64},
+    {"id": "name",     "widget": "TextBlock",   "shows": "rank_name",     "x": 420, "y": 156, "w": 380, "h": 30,  "font_size": 20},
+    {"id": "bar",      "widget": "ProgressBar", "shows": "rank_progress", "x": 420, "y": 190, "w": 380, "h": 10,  "font_size": 0},
+    {"id": "feed",     "widget": "TextBlock",   "shows": "feed",          "x": 420, "y": 208, "w": 380, "h": 140, "font_size": 18},
+    {"id": "banner",   "widget": "TextBlock",   "shows": "banner",        "x": 420, "y": 352, "w": 380, "h": 60,  "font_size": 18}
+  ]
+}

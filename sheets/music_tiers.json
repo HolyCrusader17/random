@@ -1,0 +1,19 @@
+{
+  "sheet": "music_tiers",
+  "about": "How the ULTRAKILL soundtrack follows the rank. The helper crossfades between the clean and battle versions of the same track over crossfade_s.",
+  "columns": {
+    "id":           {"type": "string", "desc": "Row id"},
+    "order":        {"type": "int",    "desc": "0 = quietest"},
+    "clean_layer":  {"type": "ref:audio", "desc": "Clean clip"},
+    "battle_layer": {"type": "ref:audio", "desc": "Battle clip"},
+    "clean_gain":   {"type": "number", "desc": "Clean volume 0..1"},
+    "battle_gain":  {"type": "number", "desc": "Battle volume 0..1"},
+    "crossfade_s":  {"type": "number", "desc": "Fade time into this tier"}
+  },
+  "rows": [
+    {"id": "calm",   "order": 0, "clean_layer": "music_clean", "battle_layer": "music_battle", "clean_gain": 0.35, "battle_gain": 0.0,  "crossfade_s": 3.0},
+    {"id": "drive",  "order": 1, "clean_layer": "music_clean", "battle_layer": "music_battle", "clean_gain": 0.75, "battle_gain": 0.0,  "crossfade_s": 2.0},
+    {"id": "combat", "order": 2, "clean_layer": "music_clean", "battle_layer": "music_battle", "clean_gain": 0.0,  "battle_gain": 0.8,  "crossfade_s": 1.0},
+    {"id": "ultra",  "order": 3, "clean_layer": "music_clean", "battle_layer": "music_battle", "clean_gain": 0.0,  "battle_gain": 1.0,  "crossfade_s": 0.5}
+  ]
+}
