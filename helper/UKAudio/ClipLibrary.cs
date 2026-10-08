@@ -170,11 +170,11 @@ namespace UKAudio
             return new List<Clip>();
         }
 
-        static string PairKey(string name, string[] patterns)
-        {
-            foreach (var p in patterns) name = Regex.Replace(name, p.Replace("(?i)", ""), "", RegexOptions.IgnoreCase);
-            return Regex.Replace(name.ToLowerInvariant(), "[^a-z0-9]", "");
-        }
+        static readonly Regex PairStrip = new Regex(
+            ((string)Sheets.Settings.First(s => s.id == "music_pair_strip").value).Replace("(?i)", ""), RegexOptions.IgnoreCase);
+
+        static string PairKey(string name) =>
+            Regex.Replace(PairStrip.Replace(name, "").ToLowerInvariant(), "[^a-z0-9]", "");
 
         void Resolve()
         {
@@ -187,10 +187,10 @@ namespace UKAudio
             }
             var cleanRow = Sheets.Audio.First(a => a.id == "music_clean");
             var battleRow = Sheets.Audio.First(a => a.id == "music_battle");
-            var battles = Matches(battleRow).GroupBy(c => PairKey(c.Name, battleRow.match)).ToDictionary(g => g.Key, g => g.First());
+            var battles = Matches(battleRow).GroupBy(c => PairKey(c.Name)).ToDictionary(g => g.Key, g => g.First());
             foreach (var clean in Matches(cleanRow))
             {
-                if (battles.TryGetValue(PairKey(clean.Name, cleanRow.match), out var battle))
+                if (battles.TryGetValue(PairKey(clean.Name), out var battle))
                     MusicPairs.Add((clean, battle));
             }
             foreach (var p in MusicPairs) report.Add($"music\t{p.clean.Name} <-> {p.battle.Name}");

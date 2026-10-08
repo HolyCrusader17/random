@@ -15,13 +15,13 @@ namespace UKAudio
         }
         internal static readonly AudioRow[] Audio = new[]
         {
-            new AudioRow { id = "sfx_rank_up", kind = "sfx", bundles = "*.bundle", match = new[] { "(?i)style.*(up|gain)", "(?i)rank.*up", "(?i)^ding", "(?i)coin" }, volume = 0.8, verified = false, note = "ULTRAKILL has no built-in per-rank sound (mods add one); pick a real UI/reward clip from clip-index.txt" },
-            new AudioRow { id = "sfx_rank_up_high", kind = "sfx", bundles = "*.bundle", match = new[] { "(?i)final.?rank", "(?i)rank.*(s|reveal)", "(?i)parry" }, volume = 0.9, verified = false, note = "a punchier real clip for S and above; the end-of-level rank sound is the first choice" },
-            new AudioRow { id = "sfx_rank_ultrakill", kind = "sfx", bundles = "*.bundle", match = new[] { "(?i)p.?rank", "(?i)final.?rank", "(?i)parry" }, volume = 1.0, verified = false, note = "the P-rank reveal if present" },
-            new AudioRow { id = "sfx_rank_down", kind = "sfx", bundles = "*.bundle", match = new[] { "(?i)(hurt|damage).*(v1|player)", "(?i)whiplash.*(break|miss)", "(?i)error" }, volume = 0.6, verified = false, note = "a real 'lost it' clip" },
-            new AudioRow { id = "sfx_mode_switch", kind = "sfx", bundles = "*.bundle", match = new[] { "(?i)weapon.?switch", "(?i)(revolver|pistol).*(spin|switch)", "(?i)click" }, volume = 0.7, verified = false, note = "weapon-variation switch click" },
-            new AudioRow { id = "music_clean", kind = "music", bundles = "music_assets*.bundle", match = new[] { "(?i)clean" }, volume = 0.9, verified = false, note = "ULTRAKILL levels ship a calm 'clean' and an intense 'battle' version of each track; the helper pairs them by shared name" },
-            new AudioRow { id = "music_battle", kind = "music", bundles = "music_assets*.bundle", match = new[] { "(?i)battle" }, volume = 1.0, verified = false, note = "battle half of the same pair" },
+            new AudioRow { id = "sfx_rank_up", kind = "sfx", bundles = "*.bundle", match = new[] { "(?i)^coinflash$", "(?i)^coinflip$" }, volume = 0.8, verified = true, note = "ULTRAKILL has no built-in per-rank sound (mods add one); the coin-ricochet flash, from a real clip-index.txt (sounds.bundle)" },
+            new AudioRow { id = "sfx_rank_up_high", kind = "sfx", bundles = "*.bundle", match = new[] { "(?i)^CleanSuccess$", "(?i)^CheckpointActivate$" }, volume = 0.9, verified = true, note = "a punchier real clip for S and above (sounds.bundle)" },
+            new AudioRow { id = "sfx_rank_ultrakill", kind = "sfx", bundles = "*.bundle", match = new[] { "(?i)^CleanSuccessBig$", "(?i)^CleanSuccess$" }, volume = 1.0, verified = true, note = "the big success sting (sounds.bundle); the P-rank reveal is not a separate clip" },
+            new AudioRow { id = "sfx_rank_down", kind = "sfx", bundles = "*.bundle", match = new[] { "(?i)^FinalDoorFail$", "(?i)^BellDull$" }, volume = 0.6, verified = true, note = "a real 'lost it' clip (sounds.bundle)" },
+            new AudioRow { id = "sfx_mode_switch", kind = "sfx", bundles = "*.bundle", match = new[] { "(?i)^switch-1$", "(?i)^ImpactClick$" }, volume = 0.7, verified = true, note = "switch click (sounds.bundle)" },
+            new AudioRow { id = "music_clean", kind = "music", bundles = "music_assets*.bundle", match = new[] { "(?i)\\bclean$" }, volume = 0.9, verified = true, note = "ULTRAKILL names the calm version '<level> Clean' (e.g. '0-2 Clean'); pairs are keyed with settings.music_pair_strip" },
+            new AudioRow { id = "music_battle", kind = "music", bundles = "music_assets*.bundle", match = new[] { "(?i)^(?!.*\\bclean\\b)[0-9p]-[0-9e]\\b" }, volume = 1.0, verified = true, note = "the intense version is the bare level name ('0-2') or '<name> Battle' ('1-2 Dark Battle')" },
         };
         internal sealed class MusicTiersRow
         {
@@ -107,6 +107,7 @@ namespace UKAudio
             new SettingsRow { id = "settings_file", value = "{localappdata}/RoNUltrakill/settings.cfg", desc = "Melty writes ULTRAKILL_DIR here before every Play" },
             new SettingsRow { id = "events_file", value = "{localappdata}/RoNUltrakill/events.log", desc = "Lua appends, helper tails" },
             new SettingsRow { id = "heartbeat_file", value = "{localappdata}/RoNUltrakill/helper.alive", desc = "Helper touches it every second" },
+            new SettingsRow { id = "music_pair_strip", value = "(?i)\\b(clean|battle)\\b", desc = "Removed from music clip names to pair a clean track with its battle version ('0-2 Clean' <-> '0-2')" },
             new SettingsRow { id = "game_process", value = "ReadyOrNotSteam-Win64-Shipping|ReadyOrNot-Win64-Shipping", desc = "Helper exits when none of these processes ('|'-separated) is running; the Steam build's exe is ReadyOrNotSteam-Win64-Shipping.exe" },
         };
     }
