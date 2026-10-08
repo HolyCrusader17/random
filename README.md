@@ -39,6 +39,9 @@ uses are tried from candidate lists and logged; see `MODLOG.md` for the in-game 
 Ready or Not's own unauthorized-force penalties in ULTRAKILL Rules is not in v1 (F10 lists the candidate
 functions for a later update). Blood-is-fuel healing and parry are planned for later updates.
 
+## License
+MIT for this project's own code (see LICENSE). Others may remix it on Melty.
+
 ## Credits
 Built with Claude Code. Bundled libraries (all MIT): AssetsTools.NET (nesrak1), Fmod5Sharp (Sam Byass),
 NVorbis (Andrew Ward), NAudio (Mark Heath), OggVorbisEncoder (Steve Lillis), IndexRange (Bradley Grainger),
