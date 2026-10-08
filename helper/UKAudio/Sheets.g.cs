@@ -95,7 +95,7 @@ namespace UKAudio
             new SettingsRow { id = "hotkey_hud", value = "F8", desc = "Show or hide the meter" },
             new SettingsRow { id = "hotkey_recon", value = "F9", desc = "(F10-F12 and ~ are UE4SS ConsoleEnabler console keys) Write classes, hook results and penalty functions to UE4SS.log" },
             new SettingsRow { id = "trace_steps", value = "True", desc = "Log each engine step once before it first runs, so a crash names its call in UE4SS.log" },
-            new SettingsRow { id = "recon_member_words", value = "Health|Dead|Death|Arrest|Restrain|Surrender|Incap|Stun|Damage", desc = "Recon lists the player pawn's properties and functions containing these ('|'-separated)" },
+            new SettingsRow { id = "recon_member_words", value = "Health|Dead|Death|Arrest|Restrain|Surrender|Incap|Stun|Damage|Equipped|Weapon|Firearm|Item|Inventory|Fire", desc = "Recon lists the player pawn's properties and functions containing these ('|'-separated)" },
             new SettingsRow { id = "load_resume_ms", value = "2000", desc = "After the player turns up in a new world (a map load), wait this long before reading it" },
             new SettingsRow { id = "hud_glyph_w", value = "0.66", desc = "Width of one rank-letter glyph as a fraction of its font size (places the rank suffix after the letter, shrinks long letters such as ULTRAKILL)" },
             new SettingsRow { id = "hud_typeface", value = "Bold", desc = "Typeface of the HUD font (Slate falls back to the font's default if it has none by that name)" },
