@@ -6,6 +6,9 @@
 - Vanilla ULTRAKILL has no distinct sound per style rank (UltraRankSounds / Grey_Announcer mods add them by hooking `StyleHUD.AscendRank`), so rank-up sounds are picked from real ULTRAKILL clips via `sheets/audio.json` regexes.
 - No public, confirmed list of Ready or Not class names was found; the mod tries candidate names from `sheets/hooks.json` and logs which answer.
 
+## Melty
+- Draft listing "ULTRAKILL OR NOT", modId d3ed94ab-50fc-46da-8540-f2cd7a447e88 (Studio: https://melty.gg/studio/d3ed94ab-50fc-46da-8540-f2cd7a447e88). Nothing uploaded or published yet.
+
 ## Route
 UE4SS Lua (loader Melty installs) for the game side; a bundled .NET Framework 4.7.2 helper for audio,
 started by Melty (`recipe.together`) with `{game:ultrakill}`; Melty writes `ULTRAKILL_DIR` into
