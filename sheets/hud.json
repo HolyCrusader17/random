@@ -1,22 +1,25 @@
 {
   "sheet": "hud",
-  "about": "Widgets of the style meter, built at runtime from stock UMG classes (no editor). Positions are in viewport units from the top-right corner, ULTRAKILL style.",
+  "about": "The style meter, laid out like ULTRAKILL's: a dark translucent panel in the top-right corner, the rank as a huge italic letter followed by the rest of its name (Destructive, SSadistic), a draining style bar, and the '+ KILL' bonus feed. Built at runtime from stock UMG classes (no editor); boxes are plain Borders so nothing depends on textures. Positions are viewport units from the top-right corner.",
   "columns": {
     "id":        {"type": "string", "desc": "Row id"},
-    "widget":    {"type": "enum:TextBlock|ProgressBar", "desc": "UMG class"},
-    "shows":     {"type": "enum:rank_letter|rank_name|rank_progress|mode_label|feed|banner", "desc": "What it displays"},
+    "widget":    {"type": "enum:TextBlock|Border", "desc": "UMG class"},
+    "shows":     {"type": "enum:panel|mode_label|rank_letter|rank_suffix|bar_back|bar_fill|feed|banner", "desc": "What it displays"},
     "x":         {"type": "int", "desc": "Offset left from the right edge"},
     "y":         {"type": "int", "desc": "Offset down from the top"},
     "w":         {"type": "int", "desc": "Width"},
     "h":         {"type": "int", "desc": "Height"},
-    "font_size": {"type": "int", "desc": "Font size (0 for non-text)"}
+    "font_size": {"type": "int", "desc": "Font size (0 for boxes)"},
+    "color":     {"type": "string", "desc": "#RRGGBB or #RRGGBBAA, or 'rank' for the current rank's colour"}
   },
   "rows": [
-    {"id": "mode",     "widget": "TextBlock",   "shows": "mode_label",    "x": 420, "y": 40,  "w": 380, "h": 28,  "font_size": 16},
-    {"id": "letter",   "widget": "TextBlock",   "shows": "rank_letter",   "x": 420, "y": 66,  "w": 380, "h": 90,  "font_size": 64},
-    {"id": "name",     "widget": "TextBlock",   "shows": "rank_name",     "x": 420, "y": 156, "w": 380, "h": 30,  "font_size": 20},
-    {"id": "bar",      "widget": "ProgressBar", "shows": "rank_progress", "x": 420, "y": 190, "w": 380, "h": 10,  "font_size": 0},
-    {"id": "feed",     "widget": "TextBlock",   "shows": "feed",          "x": 420, "y": 208, "w": 380, "h": 140, "font_size": 18},
-    {"id": "banner",   "widget": "TextBlock",   "shows": "banner",        "x": 420, "y": 352, "w": 380, "h": 60,  "font_size": 18}
+    {"id": "panel",   "widget": "Border",    "shows": "panel",       "x": 460, "y": 28,  "w": 440, "h": 300, "font_size": 0,  "color": "#000000B4"},
+    {"id": "mode",    "widget": "TextBlock", "shows": "mode_label",  "x": 440, "y": 36,  "w": 400, "h": 22,  "font_size": 13, "color": "#C8C8C8"},
+    {"id": "letter",  "widget": "TextBlock", "shows": "rank_letter", "x": 440, "y": 54,  "w": 400, "h": 104, "font_size": 84, "color": "rank"},
+    {"id": "suffix",  "widget": "TextBlock", "shows": "rank_suffix", "x": 440, "y": 104, "w": 400, "h": 46,  "font_size": 32, "color": "rank"},
+    {"id": "barback", "widget": "Border",    "shows": "bar_back",    "x": 440, "y": 162, "w": 400, "h": 12,  "font_size": 0,  "color": "#FFFFFF2E"},
+    {"id": "barfill", "widget": "Border",    "shows": "bar_fill",    "x": 440, "y": 162, "w": 400, "h": 12,  "font_size": 0,  "color": "rank"},
+    {"id": "feed",    "widget": "TextBlock", "shows": "feed",        "x": 440, "y": 184, "w": 400, "h": 136, "font_size": 20, "color": "#FFFFFF"},
+    {"id": "banner",  "widget": "TextBlock", "shows": "banner",      "x": 460, "y": 340, "w": 440, "h": 70,  "font_size": 22, "color": "#FFD700"}
   ]
 }

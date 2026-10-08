@@ -30,7 +30,8 @@ S.hooks = {
   { id = "map_name", kind = "engine", method = "call", target = "PlayerController", candidates = {"GetWorld():GetFName()"}, used_by = "mission start/end, level_clear reset", implemented = true, verified = true, source = "UE4SS native UObject:GetWorld/GetFName; GameplayStatics:GetCurrentLevelName crashed the game (UE4SS 3.0.1, RoN UE 5.3, breadcrumb in UE4SS.log); verified RoN UE4SS.log 2026-10-08 (Station hub): RoN_Station_Core" },
   { id = "move_speed", kind = "engine", method = "property", target = "Pawn.CharacterMovement", candidates = {"MaxWalkSpeed"}, used_by = "power_move_mult", implemented = true, verified = true, source = "UCharacterMovementComponent (engine); verified RoN UE4SS.log 2026-10-08 (Station hub): MaxWalkSpeed on BasePlayer_C" },
   { id = "anim_rate", kind = "engine", method = "property", target = "Pawn.Mesh", candidates = {"GlobalAnimRateScale"}, used_by = "power_anim_mult (reload speed)", implemented = true, verified = true, source = "USkeletalMeshComponent (engine); RoN may use separate first-person arms, check the log; verified RoN UE4SS.log 2026-10-08 (Station hub): GlobalAnimRateScale on BasePlayer_C" },
-  { id = "hud_widget", kind = "engine", method = "call", target = "UMG", candidates = {"/Script/UMG.UserWidget", "/Script/UMG.WidgetTree", "/Script/UMG.CanvasPanel", "/Script/UMG.TextBlock", "/Script/UMG.ProgressBar"}, used_by = "the meter", implemented = true, verified = true, source = "StaticConstructObject of stock UMG classes, no editor; verified RoN UE4SS.log 2026-10-08 (Station hub): style meter built" },
+  { id = "hud_widget", kind = "engine", method = "call", target = "UMG", candidates = {"/Script/UMG.UserWidget", "/Script/UMG.WidgetTree", "/Script/UMG.CanvasPanel", "/Script/UMG.TextBlock", "/Script/UMG.Border"}, used_by = "the meter", implemented = true, verified = false, source = "StaticConstructObject of stock UMG classes, no editor; 2026-10-08 the first version (TextBlock + ProgressBar with default styles) was built and added to the viewport but nothing showed in game, so boxes are now plain Borders and the font is chosen explicitly (hud_font)" },
+  { id = "hud_font", kind = "engine", method = "find_all", target = "UFont objects", candidates = {"/Engine/EngineFonts/Roboto.Roboto", "/Engine/EngineFonts/RobotoDistanceField.RobotoDistanceField", "Font"}, used_by = "every HUD text (a TextBlock with no cooked font draws nothing)", implemented = true, verified = false, source = "StaticFindObject on the engine fonts, else the first loaded UFont (FindAllOf Font); the mod logs the fonts it found" },
   { id = "world_change", kind = "ue4ss", method = "call", target = "PlayerController", candidates = {"GetWorld():GetAddress()"}, used_by = "pause reading the world for settings.load_resume_ms after a map load", implemented = true, verified = true, source = "UE4SS native; RegisterLoadMapPreHook/PostHook threw a C++ exception inside the engine at Ready or Not startup (UE4SS 3.0.1, crash report 2026-10-08), so loads are detected by the world changing; verified RoN UE4SS.log 2026-10-08: noticed the Station hub load" },
   { id = "key_mode", kind = "ue4ss", method = "keybind", target = "RegisterKeyBind", candidates = {"F7"}, used_by = "mode switch", implemented = true, verified = true, source = "settings.hotkey_mode; verified RoN UE4SS.log 2026-10-08: F7 cycled ultrakill/power/clean" },
   { id = "key_hud", kind = "ue4ss", method = "keybind", target = "RegisterKeyBind", candidates = {"F8"}, used_by = "show/hide meter", implemented = true, verified = false, source = "settings.hotkey_hud" },
@@ -40,12 +41,14 @@ S.hooks = {
 S.hooks_by_id = {}
 for _, r in ipairs(S.hooks) do S.hooks_by_id[r.id] = r end
 S.hud = {
-  { id = "mode", widget = "TextBlock", shows = "mode_label", x = 420, y = 40, w = 380, h = 28, font_size = 16 },
-  { id = "letter", widget = "TextBlock", shows = "rank_letter", x = 420, y = 66, w = 380, h = 90, font_size = 64 },
-  { id = "name", widget = "TextBlock", shows = "rank_name", x = 420, y = 156, w = 380, h = 30, font_size = 20 },
-  { id = "bar", widget = "ProgressBar", shows = "rank_progress", x = 420, y = 190, w = 380, h = 10, font_size = 0 },
-  { id = "feed", widget = "TextBlock", shows = "feed", x = 420, y = 208, w = 380, h = 140, font_size = 18 },
-  { id = "banner", widget = "TextBlock", shows = "banner", x = 420, y = 352, w = 380, h = 60, font_size = 18 },
+  { id = "panel", widget = "Border", shows = "panel", x = 460, y = 28, w = 440, h = 300, font_size = 0, color = "#000000B4" },
+  { id = "mode", widget = "TextBlock", shows = "mode_label", x = 440, y = 36, w = 400, h = 22, font_size = 13, color = "#C8C8C8" },
+  { id = "letter", widget = "TextBlock", shows = "rank_letter", x = 440, y = 54, w = 400, h = 104, font_size = 84, color = "rank" },
+  { id = "suffix", widget = "TextBlock", shows = "rank_suffix", x = 440, y = 104, w = 400, h = 46, font_size = 32, color = "rank" },
+  { id = "barback", widget = "Border", shows = "bar_back", x = 440, y = 162, w = 400, h = 12, font_size = 0, color = "#FFFFFF2E" },
+  { id = "barfill", widget = "Border", shows = "bar_fill", x = 440, y = 162, w = 400, h = 12, font_size = 0, color = "rank" },
+  { id = "feed", widget = "TextBlock", shows = "feed", x = 440, y = 184, w = 400, h = 136, font_size = 20, color = "#FFFFFF" },
+  { id = "banner", widget = "TextBlock", shows = "banner", x = 460, y = 340, w = 440, h = 70, font_size = 22, color = "#FFD700" },
 }
 S.hud_by_id = {}
 for _, r in ipairs(S.hud) do S.hud_by_id[r.id] = r end
@@ -83,6 +86,9 @@ S.settings = {
   { id = "trace_steps", value = true, desc = "Log each engine step once before it first runs, so a crash names its call in UE4SS.log" },
   { id = "recon_member_words", value = "Health|Dead|Death|Arrest|Restrain|Surrender|Incap|Stun|Damage", desc = "Recon lists the player pawn's properties and functions containing these ('|'-separated)" },
   { id = "load_resume_ms", value = 2000, desc = "After the player turns up in a new world (a map load), wait this long before reading it" },
+  { id = "hud_glyph_w", value = 0.66, desc = "Width of one rank-letter glyph as a fraction of its font size (places the rank suffix after the letter, shrinks long letters such as ULTRAKILL)" },
+  { id = "hud_typeface", value = "Bold", desc = "Typeface of the HUD font (Slate falls back to the font's default if it has none by that name)" },
+  { id = "hud_shear", value = -14, desc = "Render-transform shear (degrees) on the rank text and feed, for ULTRAKILL's italic look with any font" },
   { id = "poll_ms", value = 100, desc = "How often the mod reads the game" },
   { id = "fire_window_s", value = 0.8, desc = "A death this soon after the player fired counts as theirs" },
   { id = "aim_cone_deg", value = 10, desc = "Victim must be this close to the crosshair to be the player's kill" },
@@ -103,17 +109,17 @@ S.settings = {
 S.settings_by_id = {}
 for _, r in ipairs(S.settings) do S.settings_by_id[r.id] = r end
 S.style_events = {
-  { id = "arrest", feed_text = "+ARRESTED", detect = "state_arrested", rule = "a suspect or civilian becomes arrested within settings.player_reach_cm of the player", points_clean = 150, points_ultrakill = 20, points_power = 120, effect_clean = "none", effect_ultrakill = "none", effect_power = "none" },
-  { id = "squad_arrest", feed_text = "+SQUAD CUFFS", detect = "state_arrested", rule = "an arrest happens farther than settings.player_reach_cm from the player (the AI squad did it)", points_clean = 40, points_ultrakill = 0, points_power = 30, effect_clean = "none", effect_ultrakill = "none", effect_power = "none" },
-  { id = "compliance", feed_text = "+COMPLIANCE", detect = "state_surrendered", rule = "a suspect surrenders while the player can see them (inside settings.aim_cone_deg x3)", points_clean = 40, points_ultrakill = 0, points_power = 30, effect_clean = "none", effect_ultrakill = "none", effect_power = "none" },
-  { id = "takedown", feed_text = "+SUBDUED", detect = "state_incapacitated", rule = "a suspect becomes incapacitated but not dead, after the player fired at them or within reach", points_clean = 110, points_ultrakill = 30, points_power = 90, effect_clean = "none", effect_ultrakill = "none", effect_power = "none" },
-  { id = "kill", feed_text = "+KILL", detect = "state_dead", rule = "a suspect who was not surrendered or arrested dies within settings.fire_window_s of the player firing at them", points_clean = 15, points_ultrakill = 70, points_power = 60, effect_clean = "none", effect_ultrakill = "none", effect_power = "none" },
-  { id = "headshot", feed_text = "+HEADSHOT", detect = "aim_head", rule = "on a kill, the camera was within settings.headshot_cone_deg of the victim's head", points_clean = 0, points_ultrakill = 50, points_power = 40, effect_clean = "none", effect_ultrakill = "none", effect_power = "none" },
-  { id = "multikill", feed_text = "+MULTIKILL", detect = "state_dead", rule = "a second (or later) kill within settings.multikill_window_s of the last one", points_clean = 0, points_ultrakill = 120, points_power = 100, effect_clean = "none", effect_ultrakill = "none", effect_power = "none" },
-  { id = "unauthorized_kill", feed_text = "+UNAUTHORIZED", detect = "state_dead", rule = "a civilian, or a suspect who had surrendered or was arrested, dies after the player fired at them", points_clean = 0, points_ultrakill = 70, points_power = 0, effect_clean = "drop_to_d", effect_ultrakill = "none", effect_power = "drop_one_rank" },
-  { id = "fast_clear", feed_text = "+FAST CLEAR", detect = "state_arrested", rule = "a player arrest or takedown within settings.chain_window_s of the previous one", points_clean = 90, points_ultrakill = 0, points_power = 60, effect_clean = "none", effect_ultrakill = "none", effect_power = "none" },
-  { id = "level_clear", feed_text = "+AREA SECURED", detect = "characters", rule = "every suspect seen on this map is dead, arrested or incapacitated, and at least one was neutralized while the mod watched (fires once per map)", points_clean = 400, points_ultrakill = 250, points_power = 300, effect_clean = "none", effect_ultrakill = "none", effect_power = "none" },
-  { id = "hit_taken", feed_text = "-HURT", detect = "player_health", rule = "the player's health goes down", points_clean = -60, points_ultrakill = 0, points_power = 0, effect_clean = "none", effect_ultrakill = "drop_one_rank", effect_power = "drop_one_rank" },
+  { id = "arrest", feed_text = "+ ARRESTED", detect = "state_arrested", rule = "a suspect or civilian becomes arrested within settings.player_reach_cm of the player", points_clean = 150, points_ultrakill = 20, points_power = 120, effect_clean = "none", effect_ultrakill = "none", effect_power = "none" },
+  { id = "squad_arrest", feed_text = "+ SQUAD CUFFS", detect = "state_arrested", rule = "an arrest happens farther than settings.player_reach_cm from the player (the AI squad did it)", points_clean = 40, points_ultrakill = 0, points_power = 30, effect_clean = "none", effect_ultrakill = "none", effect_power = "none" },
+  { id = "compliance", feed_text = "+ COMPLIANCE", detect = "state_surrendered", rule = "a suspect surrenders while the player can see them (inside settings.aim_cone_deg x3)", points_clean = 40, points_ultrakill = 0, points_power = 30, effect_clean = "none", effect_ultrakill = "none", effect_power = "none" },
+  { id = "takedown", feed_text = "+ SUBDUED", detect = "state_incapacitated", rule = "a suspect becomes incapacitated but not dead, after the player fired at them or within reach", points_clean = 110, points_ultrakill = 30, points_power = 90, effect_clean = "none", effect_ultrakill = "none", effect_power = "none" },
+  { id = "kill", feed_text = "+ KILL", detect = "state_dead", rule = "a suspect who was not surrendered or arrested dies within settings.fire_window_s of the player firing at them", points_clean = 15, points_ultrakill = 70, points_power = 60, effect_clean = "none", effect_ultrakill = "none", effect_power = "none" },
+  { id = "headshot", feed_text = "+ HEADSHOT", detect = "aim_head", rule = "on a kill, the camera was within settings.headshot_cone_deg of the victim's head", points_clean = 0, points_ultrakill = 50, points_power = 40, effect_clean = "none", effect_ultrakill = "none", effect_power = "none" },
+  { id = "multikill", feed_text = "+ MULTIKILL", detect = "state_dead", rule = "a second (or later) kill within settings.multikill_window_s of the last one", points_clean = 0, points_ultrakill = 120, points_power = 100, effect_clean = "none", effect_ultrakill = "none", effect_power = "none" },
+  { id = "unauthorized_kill", feed_text = "+ UNAUTHORIZED", detect = "state_dead", rule = "a civilian, or a suspect who had surrendered or was arrested, dies after the player fired at them", points_clean = 0, points_ultrakill = 70, points_power = 0, effect_clean = "drop_to_d", effect_ultrakill = "none", effect_power = "drop_one_rank" },
+  { id = "fast_clear", feed_text = "+ FAST CLEAR", detect = "state_arrested", rule = "a player arrest or takedown within settings.chain_window_s of the previous one", points_clean = 90, points_ultrakill = 0, points_power = 60, effect_clean = "none", effect_ultrakill = "none", effect_power = "none" },
+  { id = "level_clear", feed_text = "+ AREA SECURED", detect = "characters", rule = "every suspect seen on this map is dead, arrested or incapacitated, and at least one was neutralized while the mod watched (fires once per map)", points_clean = 400, points_ultrakill = 250, points_power = 300, effect_clean = "none", effect_ultrakill = "none", effect_power = "none" },
+  { id = "hit_taken", feed_text = "- HURT", detect = "player_health", rule = "the player's health goes down", points_clean = -60, points_ultrakill = 0, points_power = 0, effect_clean = "none", effect_ultrakill = "drop_one_rank", effect_power = "drop_one_rank" },
 }
 S.style_events_by_id = {}
 for _, r in ipairs(S.style_events) do S.style_events_by_id[r.id] = r end

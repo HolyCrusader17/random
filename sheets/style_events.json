@@ -46,7 +46,7 @@
   "rows": [
     {
       "id": "arrest",
-      "feed_text": "+ARRESTED",
+      "feed_text": "+ ARRESTED",
       "detect": "state_arrested",
       "rule": "a suspect or civilian becomes arrested within settings.player_reach_cm of the player",
       "points_clean": 150,
@@ -58,7 +58,7 @@
     },
     {
       "id": "squad_arrest",
-      "feed_text": "+SQUAD CUFFS",
+      "feed_text": "+ SQUAD CUFFS",
       "detect": "state_arrested",
       "rule": "an arrest happens farther than settings.player_reach_cm from the player (the AI squad did it)",
       "points_clean": 40,
@@ -70,7 +70,7 @@
     },
     {
       "id": "compliance",
-      "feed_text": "+COMPLIANCE",
+      "feed_text": "+ COMPLIANCE",
       "detect": "state_surrendered",
       "rule": "a suspect surrenders while the player can see them (inside settings.aim_cone_deg x3)",
       "points_clean": 40,
@@ -82,7 +82,7 @@
     },
     {
       "id": "takedown",
-      "feed_text": "+SUBDUED",
+      "feed_text": "+ SUBDUED",
       "detect": "state_incapacitated",
       "rule": "a suspect becomes incapacitated but not dead, after the player fired at them or within reach",
       "points_clean": 110,
@@ -94,7 +94,7 @@
     },
     {
       "id": "kill",
-      "feed_text": "+KILL",
+      "feed_text": "+ KILL",
       "detect": "state_dead",
       "rule": "a suspect who was not surrendered or arrested dies within settings.fire_window_s of the player firing at them",
       "points_clean": 15,
@@ -106,7 +106,7 @@
     },
     {
       "id": "headshot",
-      "feed_text": "+HEADSHOT",
+      "feed_text": "+ HEADSHOT",
       "detect": "aim_head",
       "rule": "on a kill, the camera was within settings.headshot_cone_deg of the victim's head",
       "points_clean": 0,
@@ -118,7 +118,7 @@
     },
     {
       "id": "multikill",
-      "feed_text": "+MULTIKILL",
+      "feed_text": "+ MULTIKILL",
       "detect": "state_dead",
       "rule": "a second (or later) kill within settings.multikill_window_s of the last one",
       "points_clean": 0,
@@ -130,7 +130,7 @@
     },
     {
       "id": "unauthorized_kill",
-      "feed_text": "+UNAUTHORIZED",
+      "feed_text": "+ UNAUTHORIZED",
       "detect": "state_dead",
       "rule": "a civilian, or a suspect who had surrendered or was arrested, dies after the player fired at them",
       "points_clean": 0,
@@ -142,7 +142,7 @@
     },
     {
       "id": "fast_clear",
-      "feed_text": "+FAST CLEAR",
+      "feed_text": "+ FAST CLEAR",
       "detect": "state_arrested",
       "rule": "a player arrest or takedown within settings.chain_window_s of the previous one",
       "points_clean": 90,
@@ -154,7 +154,7 @@
     },
     {
       "id": "level_clear",
-      "feed_text": "+AREA SECURED",
+      "feed_text": "+ AREA SECURED",
       "detect": "characters",
       "rule": "every suspect seen on this map is dead, arrested or incapacitated, and at least one was neutralized while the mod watched (fires once per map)",
       "points_clean": 400,
@@ -166,7 +166,7 @@
     },
     {
       "id": "hit_taken",
-      "feed_text": "-HURT",
+      "feed_text": "- HURT",
       "detect": "player_health",
       "rule": "the player's health goes down",
       "points_clean": -60,

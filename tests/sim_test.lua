@@ -22,6 +22,8 @@ local function obj(class, fields)
     o.__class = class
     function o:IsValid() return true end
     function o:GetAddress() return addr end
+    function o:GetFullName() return class end
+    function o:GetFName() return { ToString = function() return class end } end
     function o:GetClass()
         return { GetFName = function() return { ToString = function() return class end } end }
     end
@@ -33,7 +35,7 @@ local hud_text = {}
 local widgets = {}
 local function widget(class, name)
     local w = obj(class, {})
-    w.name = name
+    w.name = name:gsub("^RoNUK%d+_", "RoNUK_")
     w.Font = { Size = 0 }
     function w:SetFont(f) self.Font = f end
     function w:SetShadowOffset() end
@@ -41,11 +43,15 @@ local function widget(class, name)
     function w:SetText(t) hud_text[self.name] = t.text end
     function w:SetColorAndOpacity() end
     function w:SetPercent(p) hud_text[self.name .. ".percent"] = p end
-    function w:SetFillColorAndOpacity() end
+    function w:SetBrushColor() end
+    function w:SetRenderTransformShear() end
+    function w:IsInViewport() return self.in_viewport == true end
     function w:SetVisibility(v) hud_text.visibility = v end
     function w:AddToViewport() self.in_viewport = true end
     function w:AddChildToCanvas()
-        return { SetAnchors = function() end, SetPosition = function() end, SetSize = function() end }
+        local slot = { SetAnchors = function() end, SetPosition = function() end }
+        function slot.SetSize(_, v) hud_text[self.name .. ".size"] = v end
+        return slot
     end
     widgets[#widgets + 1] = w
     return w

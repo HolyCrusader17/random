@@ -346,11 +346,13 @@ end
 ---------------------------------------------------------------------------------------------------
 -- HUD: built at runtime from stock UMG classes, no editor
 ---------------------------------------------------------------------------------------------------
-local HUD = { widget = nil, parts = {} }
+local HUD = { widget = nil, parts = {}, slots = {}, font = nil, builds = 0, last = {} }
 
+-- "#RRGGBB" or "#RRGGBBAA" -> linear FLinearColor
 local function linear(hex)
     local function c(i) return (tonumber(hex:sub(i, i + 1), 16) / 255) ^ 2.2 end
-    return { R = c(2), G = c(4), B = c(6), A = 1.0 }
+    local a = #hex >= 9 and tonumber(hex:sub(8, 9), 16) / 255 or 1.0
+    return { R = c(2), G = c(4), B = c(6), A = a }
 end
 
 local function construct(class_path, outer, name)
@@ -359,49 +361,116 @@ local function construct(class_path, outer, name)
     return StaticConstructObject(cls, outer, FName(name))
 end
 
+-- A TextBlock whose font asset was not cooked draws nothing, so the font is picked explicitly.
+local function hud_font()
+    if valid(HUD.font) then return HUD.font end
+    local names = {}
+    for _, f in ipairs(FindAllOf("Font") or {}) do
+        if #names < 30 then names[#names + 1] = (f:GetFName():ToString()) end
+    end
+    log("fonts loaded: " .. (#names > 0 and table.concat(names, ", ") or "(none)"))
+    for _, cand in ipairs(hookrow("hud_font").candidates) do
+        local f
+        if cand:sub(1, 1) == "/" then
+            f = StaticFindObject(cand)
+        else
+            f = FindFirstOf(cand)
+        end
+        if valid(f) then
+            HUD.font = f
+            note_ok("hud_font", "find_all", cand)
+            log("HUD font: " .. f:GetFullName())
+            return f
+        end
+    end
+    log("no UFont found; HUD text may not draw")
+    return nil
+end
+
+local function color_of(row)
+    return row.color == "rank" and S.ranks[M.rank].color or row.color
+end
+
 local function build_hud()
     local gi = FindFirstOf("GameInstance")
     if not valid(gi) then return end
     local paths = hookrow("hud_widget").candidates
+    HUD.builds = HUD.builds + 1
+    local tag = "RoNUK" .. HUD.builds .. "_" -- a fresh name per build: reusing one under the same outer
+                                              -- would construct over the previous meter
     crumb("hud: construct widgets")
-    local widget = construct(paths[1], gi, "RoNUK_StyleMeter")
-    local tree = construct(paths[2], widget, "RoNUK_Tree")
+    local widget = construct(paths[1], gi, tag .. "StyleMeter")
+    local tree = construct(paths[2], widget, tag .. "Tree")
     widget.WidgetTree = tree
-    local canvas = construct(paths[3], tree, "RoNUK_Canvas")
+    local canvas = construct(paths[3], tree, tag .. "Canvas")
     tree.RootWidget = canvas
-    HUD.parts = {}
+    local font = hud_font()
+    HUD.parts, HUD.slots, HUD.last = {}, {}, {}
     for _, row in ipairs(S.hud) do
         local w
         if row.widget == "TextBlock" then
-            w = construct(paths[4], tree, "RoNUK_" .. row.id)
+            w = construct(paths[4], tree, tag .. row.id)
             pcall(function()
-                local font = w.Font
-                font.Size = row.font_size
-                w:SetFont(font)
+                local fi = w.Font
+                if font then fi.FontObject = font end
+                fi.TypefaceFontName = FName(cfg("hud_typeface"))
+                fi.Size = row.font_size
+                w:SetFont(fi)
             end)
-            pcall(function() w:SetShadowOffset({ X = 2, Y = 2 }) end)
-            pcall(function() w:SetShadowColorAndOpacity({ R = 0, G = 0, B = 0, A = 0.85 }) end)
+            pcall(function() w:SetShadowOffset({ X = 3, Y = 3 }) end)
+            pcall(function() w:SetShadowColorAndOpacity({ R = 0, G = 0, B = 0, A = 0.9 }) end)
+            if row.shows == "rank_letter" or row.shows == "rank_suffix" or row.shows == "feed" then
+                pcall(function() w:SetRenderTransformShear({ X = cfg("hud_shear"), Y = 0 }) end)
+            end
         else
-            w = construct(paths[5], tree, "RoNUK_" .. row.id)
+            w = construct(paths[5], tree, tag .. row.id)
+            pcall(function() w:SetPadding({ Left = 0, Top = 0, Right = 0, Bottom = 0 }) end)
         end
         local slot = canvas:AddChildToCanvas(w)
         slot:SetAnchors({ Minimum = { X = 1, Y = 0 }, Maximum = { X = 1, Y = 0 } })
         slot:SetPosition({ X = -row.x, Y = row.y })
         slot:SetSize({ X = row.w, Y = row.h })
-        HUD.parts[row.shows] = w
+        HUD.parts[row.shows], HUD.slots[row.shows] = w, slot
     end
     crumb("hud: AddToViewport")
     widget:AddToViewport(50)
     HUD.widget = widget
+    local okv, inv = pcall(function() return widget:IsInViewport() end)
     note_ok("hud_widget", "call", "StaticConstructObject+AddToViewport")
-    log("style meter built")
+    log("style meter built (" .. tag .. ", in viewport: " .. tostring(okv and inv) .. ")")
+end
+
+-- Setters skip unchanged values so the meter is not re-laid-out ten times a second.
+local function changed(key, v)
+    if HUD.last[key] == v then return false end
+    HUD.last[key] = v
+    return true
 end
 
 local function set_text(shows, text, color)
     local w = HUD.parts[shows]
     if not valid(w) then return end
-    pcall(function() w:SetText(FText(text)) end)
-    if color then pcall(function() w:SetColorAndOpacity({ SpecifiedColor = linear(color), ColorUseRule = 0 }) end) end
+    if changed(shows .. ".text", text) then pcall(function() w:SetText(FText(text)) end) end
+    if color and changed(shows .. ".color", color) then
+        pcall(function() w:SetColorAndOpacity({ SpecifiedColor = linear(color), ColorUseRule = 0 }) end)
+    end
+end
+
+local function set_box(shows, color)
+    local w = HUD.parts[shows]
+    if valid(w) and changed(shows .. ".color", color) then
+        pcall(function() w:SetBrushColor(linear(color)) end)
+    end
+end
+
+local function hud_row(shows)
+    for _, row in ipairs(S.hud) do if row.shows == shows then return row end end
+end
+
+-- ULTRAKILL writes the rank as a big letter run on by the rest of the word: D + ESTRUCTIVE, SS + ADISTIC.
+local function rank_parts(r)
+    if r.name:sub(1, #r.letter) == r.letter then return r.letter, r.name:sub(#r.letter + 1) end
+    return r.letter, ""
 end
 
 local function draw_hud()
@@ -411,23 +480,42 @@ local function draw_hud()
         if not ok then log("HUD build failed: " .. tostring(err)); return end
     end
     if not HUD.widget then return end
-    pcall(function() HUD.widget:SetVisibility(M.hud_visible and 4 or 1) end) -- 4 = SelfHitTestInvisible, 1 = Collapsed
+    if changed("visible", M.hud_visible) then
+        pcall(function() HUD.widget:SetVisibility(M.hud_visible and 4 or 1) end) -- 4 = SelfHitTestInvisible, 1 = Collapsed
+    end
     local r = S.ranks[M.rank]
     local nxt = S.ranks[M.rank + 1]
-    set_text("mode_label", mode().label, "#FFFFFF")
-    set_text("rank_letter", r.letter, r.color)
-    set_text("rank_name", r.name, r.color)
-    set_text("feed", table.concat(M.feed, "\n"), "#FFFFFF")
-    set_text("banner", now() < M.banner_until and M.banner or "", "#FFD700")
-    local bar = HUD.parts["rank_progress"]
-    if valid(bar) then
-        local p = nxt and (M.style - r.threshold) / (nxt.threshold - r.threshold)
-            or (M.style - r.threshold) / (cfg("style_cap") - r.threshold)
-        pcall(function() bar:SetPercent(math.max(0, math.min(1, p))) end)
-        pcall(function() bar:SetFillColorAndOpacity(linear(r.color)) end)
-    end
-end
+    set_box("panel", color_of(hud_row("panel")))
+    set_box("bar_back", color_of(hud_row("bar_back")))
+    set_box("bar_fill", color_of(hud_row("bar_fill")))
+    set_text("mode_label", mode().label, hud_row("mode_label").color)
 
+    -- big letter, shrunk to fit for long ones (ULTRAKILL), then the rest of the name right after it
+    local letter, suffix = rank_parts(r)
+    local lrow, srow = hud_row("rank_letter"), hud_row("rank_suffix")
+    local gw = cfg("hud_glyph_w")
+    local size = math.min(lrow.font_size, math.floor(lrow.w / (#letter * gw)))
+    local lw = HUD.parts["rank_letter"]
+    if valid(lw) and changed("letter.size", size) then
+        pcall(function() local fi = lw.Font; fi.Size = size; lw:SetFont(fi) end)
+    end
+    set_text("rank_letter", letter, r.color)
+    set_text("rank_suffix", suffix, r.color)
+    local sslot = HUD.slots["rank_suffix"]
+    local sx = -srow.x + math.floor(#letter * size * gw)
+    if sslot and changed("suffix.x", sx) then pcall(function() sslot:SetPosition({ X = sx, Y = srow.y }) end) end
+
+    -- the style bar drains toward the previous rank, like ULTRAKILL's
+    local p = nxt and (M.style - r.threshold) / (nxt.threshold - r.threshold)
+        or (M.style - r.threshold) / (cfg("style_cap") - r.threshold)
+    p = math.max(0, math.min(1, p))
+    local frow, fslot = hud_row("bar_fill"), HUD.slots["bar_fill"]
+    local fw = math.floor(frow.w * p + 0.5)
+    if fslot and changed("bar.w", fw) then pcall(function() fslot:SetSize({ X = fw, Y = frow.h }) end) end
+
+    set_text("feed", table.concat(M.feed, "\n"), hud_row("feed").color)
+    set_text("banner", now() < M.banner_until and M.banner or "", hud_row("banner").color)
+end
 ---------------------------------------------------------------------------------------------------
 -- Watching characters
 ---------------------------------------------------------------------------------------------------
