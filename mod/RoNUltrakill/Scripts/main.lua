@@ -608,7 +608,10 @@ local function bind(setting_id, hook_id, fn)
     note_ok(hook_id, "keybind", cfg(setting_id))
 end
 bind("hotkey_mode", "key_mode", function() want_mode_switch = true end)
-bind("hotkey_hud", "key_hud", function() M.hud_visible = not M.hud_visible end)
+bind("hotkey_hud", "key_hud", function()
+    M.hud_visible = not M.hud_visible
+    log("meter " .. (M.hud_visible and "shown" or "hidden"))
+end)
 bind("hotkey_recon", "key_recon", function() want_recon = true end)
 
 local function switch_mode()
