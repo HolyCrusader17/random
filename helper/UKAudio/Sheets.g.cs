@@ -94,6 +94,8 @@ namespace UKAudio
             new SettingsRow { id = "hotkey_mode", value = "F7", desc = "Cycle Clean → ULTRAKILL Rules → Power" },
             new SettingsRow { id = "hotkey_hud", value = "F8", desc = "Show or hide the meter" },
             new SettingsRow { id = "hotkey_recon", value = "F9", desc = "(F10-F12 and ~ are UE4SS ConsoleEnabler console keys) Write classes, hook results and penalty functions to UE4SS.log" },
+            new SettingsRow { id = "trace_steps", value = "True", desc = "Log each engine step once before it first runs, so a crash names its call in UE4SS.log" },
+            new SettingsRow { id = "recon_member_words", value = "Health|Dead|Death|Arrest|Restrain|Surrender|Incap|Stun|Damage", desc = "Recon lists the player pawn's properties and functions containing these ('|'-separated)" },
             new SettingsRow { id = "poll_ms", value = "100", desc = "How often the mod reads the game" },
             new SettingsRow { id = "fire_window_s", value = "0.8", desc = "A death this soon after the player fired counts as theirs" },
             new SettingsRow { id = "aim_cone_deg", value = "10", desc = "Victim must be this close to the crosshair to be the player's kill" },

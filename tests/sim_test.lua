@@ -124,14 +124,7 @@ local logs = {}
 local real_print = print
 print = function(s) logs[#logs + 1] = s; if os.getenv("SIM_VERBOSE") then real_print((s:gsub("\n$", ""))) end end
 
-package.preload["UEHelpers"] = function()
-    return {
-        GetPlayerController = function() return pc end,
-        GetGameplayStatics = function()
-            return { GetCurrentLevelName = function() return { ToString = function() return map end } end }
-        end,
-    }
-end
+function pc:GetWorld() return { GetFName = function() return { ToString = function() return map end } end } end
 
 ---------------------------------------------------------------------------------------------- run
 dofile(here .. "/mod/RoNUltrakill/Scripts/main.lua")

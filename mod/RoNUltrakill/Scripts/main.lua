@@ -3,7 +3,6 @@
 -- Engine reads run on the game thread and every read is wrapped in pcall (see game_info notes).
 
 local S = require("sheets")
-local UEHelpers = require("UEHelpers")
 
 local TAG = "[RoNUK] "
 local function log(msg) print(TAG .. tostring(msg) .. "\n") end
@@ -80,6 +79,7 @@ end
 local hook_ok = {}       -- hook id -> "name (how)" once it answered
 local hook_cache = {}    -- hook id -> class name -> {how, name} or false
 local classes_seen = {}  -- class name -> category
+local cached_pc = nil    -- the local player's controller (see player_controller)
 
 local function valid(o)
     if o == nil then return false end
@@ -90,6 +90,13 @@ end
 local function class_name(o)
     local ok, n = pcall(function() return o:GetClass():GetFName():ToString() end)
     return ok and n or "?"
+end
+
+-- Breadcrumbs: each distinct step is logged once before it runs, so the last line in UE4SS.log names the
+-- call that took the game down if an engine read crashes (UE4SS.log is flushed up to the crash).
+local crumbs = {}
+local function crumb(s)
+    if cfg("trace_steps") and not crumbs[s] then crumbs[s] = true; log("trace " .. s) end
 end
 
 local function note_ok(id, how, name, cls)
@@ -117,13 +124,19 @@ local function read_state(o, id)
         return nil
     end
     for _, name in ipairs(row.candidates) do
+        crumb(string.format("%s: read %s.%s", id, cls, name))
         local ok, v = pcall(function() return o[name] end)
         if ok and (type(v) == "boolean" or type(v) == "number") then
             hook_cache[id][cls] = { how = "property", name = name }
             note_ok(id, "property", name, cls)
             return v
         end
-        if row.method ~= "property" then
+        local vcls = (ok and type(v) == "userdata" and valid(v)) and class_name(v) or nil
+        log(string.format("probe %s %s.%s -> %s", id, cls, name,
+            ok and (vcls or type(v)) or ("error " .. tostring(v))))
+        -- only real UFunctions are called; a component or struct under that name is left alone
+        if row.method ~= "property" and ok and (type(v) == "function" or vcls == "Function") then
+            crumb(string.format("%s: call %s:%s()", id, cls, name))
             ok, v = pcall(function() return o[name](o) end)
             if ok and (type(v) == "boolean" or type(v) == "number") then
                 hook_cache[id][cls] = { how = "call", name = name }
@@ -201,6 +214,7 @@ local function head_loc(o)
     if not ok or not valid(mesh) then return nil end
     if head_socket == nil then
         for _, name in ipairs(hookrow("aim_head").candidates) do
+            crumb("aim_head: DoesSocketExist " .. name)
             local ok2, has = pcall(function() return mesh:DoesSocketExist(FName(name)) end)
             if ok2 and has then head_socket = name; note_ok("aim_head", "socket", name, class_name(o)); break end
         end
@@ -309,6 +323,7 @@ local function apply_buffs(pawn)
         M.buffed_pawn = pawn:GetAddress()
         M.base_speed, M.base_anim = nil, nil
     end
+    crumb("move_speed: CharacterMovement.MaxWalkSpeed")
     pcall(function()
         local cm = pawn.CharacterMovement
         if valid(cm) then
@@ -317,6 +332,7 @@ local function apply_buffs(pawn)
             note_ok("move_speed", "property", "MaxWalkSpeed", class_name(pawn))
         end
     end)
+    crumb("anim_rate: Mesh.GlobalAnimRateScale")
     pcall(function()
         local mesh = pawn.Mesh
         if valid(mesh) then
@@ -347,6 +363,7 @@ local function build_hud()
     local gi = FindFirstOf("GameInstance")
     if not valid(gi) then return end
     local paths = hookrow("hud_widget").candidates
+    crumb("hud: construct widgets")
     local widget = construct(paths[1], gi, "RoNUK_StyleMeter")
     local tree = construct(paths[2], widget, "RoNUK_Tree")
     widget.WidgetTree = tree
@@ -373,6 +390,7 @@ local function build_hud()
         slot:SetSize({ X = row.w, Y = row.h })
         HUD.parts[row.shows] = w
     end
+    crumb("hud: AddToViewport")
     widget:AddToViewport(50)
     HUD.widget = widget
     note_ok("hud_widget", "call", "StaticConstructObject+AddToViewport")
@@ -424,6 +442,7 @@ end
 local function fire_held(pc)
     for _, cand in ipairs(hookrow("fire_input").candidates) do
         local key = cand:match(":(.+)$")
+        crumb("fire_input: IsInputKeyDown " .. key)
         local ok, down = pcall(function() return pc:IsInputKeyDown({ KeyName = FName(key) }) end)
         if ok and down then note_ok("fire_input", "call", cand); return true end
     end
@@ -431,9 +450,11 @@ local function fire_held(pc)
 end
 
 local function scan(pc, pawn, t)
+    crumb("camera: PlayerCameraManager")
     local cam = pc.PlayerCameraManager
     local cam_loc, fwd
     if valid(cam) then
+        crumb("camera: GetCameraLocation/Rotation")
         local ok, l = pcall(function() return cam:GetCameraLocation() end)
         local ok2, r = pcall(function() return cam:GetCameraRotation() end)
         if ok and ok2 and l and r then
@@ -443,8 +464,10 @@ local function scan(pc, pawn, t)
     end
     local firing = fire_held(pc)
     if firing then M.last_fire = t end
+    crumb("pawn: K2_GetActorLocation")
     local player_loc = actor_loc(pawn) or cam_loc
 
+    crumb("characters: FindAllOf Character")
     local chars = FindAllOf("Character") or {}
     if #chars > 0 then note_ok("characters", "find_all", "Character") end
     local pawn_addr = pawn:GetAddress()
@@ -461,6 +484,7 @@ local function scan(pc, pawn, t)
                     surrendered = flag(o, "state_surrendered"),
                     incap = flag(o, "state_incapacitated"),
                 }
+                crumb("characters: K2_GetActorLocation " .. class_name(o))
                 local loc = actor_loc(o)
                 local dist = (loc and player_loc) and vlen(vsub(loc, player_loc)) or math.huge
                 local prev = tracked[addr]
@@ -545,10 +569,11 @@ end
 -- Map changes and the end-of-mission banner
 ---------------------------------------------------------------------------------------------------
 local function current_map(pc)
-    local ok, name = pcall(function()
-        return UEHelpers.GetGameplayStatics():GetCurrentLevelName(pc, true):ToString()
-    end)
-    if ok and name then note_ok("map_name", "call", "GetCurrentLevelName"); return name end
+    -- GameplayStatics:GetCurrentLevelName (FString return) crashes UE4SS 3.0.1 in Ready or Not (UE 5.3);
+    -- the UWorld's own name is the map name and is read natively by UE4SS.
+    crumb("map_name: GetWorld():GetFName()")
+    local ok, name = pcall(function() return pc:GetWorld():GetFName():ToString() end)
+    if ok and type(name) == "string" and name ~= "" then note_ok("map_name", "call", "GetWorld():GetFName()"); return name end
     return nil
 end
 
@@ -595,9 +620,45 @@ local function switch_mode()
     set_banner(m.label .. "\n" .. m.summary, 3)
 end
 
+-- Lists the properties and functions of o's class chain whose names contain one of the fragments.
+local function list_members(o, frags)
+    local okc, cls = pcall(function() return o:GetClass() end)
+    local depth = 0
+    while okc and valid(cls) and depth < 12 do
+        local cname = cls:GetFName():ToString()
+        pcall(function()
+            cls:ForEachProperty(function(p)
+                local n = p:GetFName():ToString()
+                for _, f in ipairs(frags) do
+                    if n:lower():find(f:lower(), 1, true) then
+                        log(string.format("member %s.%s (%s)", cname, n, p:GetClass():GetFName():ToString())); break
+                    end
+                end
+            end)
+        end)
+        pcall(function()
+            cls:ForEachFunction(function(fn)
+                local n = fn:GetFName():ToString()
+                for _, f in ipairs(frags) do
+                    if n:lower():find(f:lower(), 1, true) then log(string.format("member %s:%s()", cname, n)); break end
+                end
+            end)
+        end)
+        okc, cls = pcall(function() return cls:GetSuperStruct() end)
+        depth = depth + 1
+    end
+end
+
 local function recon()
     log("---- recon ----")
     for cls, cat in pairs(classes_seen) do log("class " .. cls .. " = " .. cat) end
+    local pc = cached_pc
+    if valid(pc) and valid(pc.Pawn) then
+        log("members of the player pawn " .. class_name(pc.Pawn) .. ":")
+        local words = {}
+        for w in cfg("recon_member_words"):gmatch("[^|]+") do words[#words + 1] = w end
+        list_members(pc.Pawn, words)
+    end
     for _, row in ipairs(S.hooks) do
         log(string.format("hook %-20s %s", row.id, hook_ok[row.id] or "NOT SEEN"))
     end
@@ -628,22 +689,27 @@ local err_count = 0
 
 -- UE4SS 3.0.1's UEHelpers.GetPlayerController calls an undefined global (Print) or errors while no pawn
 -- exists (main menu, loading), so the mod finds the local player's controller itself.
-local cached_pc = nil
 local function player_controller()
     if valid(cached_pc) and valid(cached_pc.Pawn) then return cached_pc end
     cached_pc = nil
+    crumb("player: FindAllOf PlayerController")
     for _, c in ipairs(FindAllOf("PlayerController") or {}) do
+        crumb("player: " .. class_name(c) .. ".Pawn")
         local ok, mine = pcall(function() return valid(c) and valid(c.Pawn) and c.Pawn:IsPlayerControlled() end)
         if ok and mine then cached_pc = c; break end
     end
     return cached_pc
 end
 
+local tick_n = 0
 local function tick()
+    tick_n = tick_n + 1
+    if cfg("trace_steps") and (tick_n <= 3 or tick_n % 50 == 0) then log("trace tick " .. tick_n) end
     tick_clock = tick_clock + cfg("poll_ms") / 1000
     local pc = player_controller()
     if not valid(pc) then return end -- main menu
     note_ok("player", "find_all", "PlayerController")
+    crumb("tick: on_map")
     on_map(pc)
     if want_mode_switch then want_mode_switch = false; switch_mode() end
     if want_recon then want_recon = false; recon() end
@@ -652,12 +718,17 @@ local function tick()
     local dt = last_t and math.max(0, math.min(1, t - last_t)) or 0
     last_t = t
     if valid(pawn) then
+        crumb("tick: scan")
         scan(pc, pawn, t)
+        crumb("tick: watch_health")
         watch_health(pawn)
+        crumb("tick: apply_buffs")
         apply_buffs(pawn)
     end
     decay(dt)
+    crumb("tick: draw_hud")
     draw_hud()
+    crumb("tick: complete")
 end
 
 log("loaded; " .. #S.ranks .. " ranks, " .. #S.modes .. " modes, " .. #S.style_events .. " style events")
