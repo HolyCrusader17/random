@@ -1,0 +1,21 @@
+{
+  "sheet": "movement",
+  "about": "BO3 movement for the Dragonborn. Tuning numbers are read from BO3's player movement settings where they exist (bo3_param); otherwise the design value is used.",
+  "columns": {
+    "id": {"type": "string", "desc": "Row id"},
+    "name": {"type": "string", "desc": "Name"},
+    "input": {"type": "ref:settings", "desc": "Key that triggers it"},
+    "rule": {"type": "string", "desc": "What happens"},
+    "bo3_param": {"type": "string", "desc": "BO3 setting it reads, or 'design'"},
+    "sound": {"type": "string", "desc": "BO3 sound alias played"},
+    "hooks": {"type": "list:ref:hooks", "desc": "Hooks it needs"},
+    "implemented": {"type": "bool", "desc": "Code exists"},
+    "verified": {"type": "bool", "desc": "Seen working"},
+    "source": {"type": "string", "desc": "Where it came from"}
+  },
+  "rows": [
+    {"id": "thrust_jump", "name": "Thrust Jump", "input": "key_jump", "rule": "Jump again in the air: upward boost, fuel bar drains, refills on landing", "bo3_param": "player_thrust* (dvars)", "sound": "from BO3 player movement aliases", "hooks": ["input", "player_velocity", "on_ground"], "implemented": false, "verified": false, "source": "guess from memory of BO3; confirm against the player's BO3 files (bo3_sources)"},
+    {"id": "slide", "name": "Slide", "input": "key_crouch", "rule": "Crouch while sprinting: low fast slide that decays over BO3's slide time; can shoot while sliding", "bo3_param": "player_slide* (dvars)", "sound": "from BO3 player movement aliases", "hooks": ["input", "player_velocity", "sprinting", "crouch_state"], "implemented": false, "verified": false, "source": "guess from memory of BO3; confirm against the player's BO3 files (bo3_sources)"},
+    {"id": "wall_run", "name": "Wall Run", "input": "key_jump", "rule": "Jump into a wall at an angle while sprinting: run along it for up to BO3's wall-run time, jump off", "bo3_param": "wallrun* (dvars)", "sound": "from BO3 player movement aliases", "hooks": ["input", "player_velocity", "raycast", "gravity"], "implemented": false, "verified": false, "source": "guess from memory of BO3; confirm against the player's BO3 files (bo3_sources)"}
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "sheet": "bo3_sources",
+  "about": "Where each kind of BO3 content is read from the player's own copy. This is the riskiest sheet: none of it is confirmed until the player's BO3 folder has been looked at. Nothing from BO3 is ever shipped.",
+  "columns": {
+    "id": {"type": "string", "desc": "Row id"},
+    "content": {"type": "string", "desc": "What is read"},
+    "location": {"type": "string", "desc": "Path pattern under the BO3 folder"},
+    "format": {"type": "string", "desc": "File format"},
+    "reader": {"type": "string", "desc": "How the mod reads it"},
+    "used_by": {"type": "list", "desc": "Sheets that need it"},
+    "verified": {"type": "bool", "desc": "Confirmed on the player's BO3 install"},
+    "source": {"type": "string", "desc": "Where it came from"}
+  },
+  "rows": [
+    {"id": "install", "content": "BO3 folder", "location": "steamapps/common/Call of Duty Black Ops III via Steam libraryfolders.vdf (app 311210)", "format": "vdf", "reader": "read registry SteamPath, parse libraryfolders.vdf", "used_by": ["ui"], "verified": false, "source": "Melty search_games: steamAppId 311210"},
+    {"id": "weapon_defs", "content": "Weapon stats, attachments, PaP variants", "location": "zone/*.ff (and/or Mod Tools share/raw)", "format": "BO3 fastfile (compressed zone)", "reader": "TBD after recon: offline fastfile reader or Mod Tools GDTs", "used_by": ["weapons", "attachments", "stat_map"], "verified": false, "source": "web: codresearch.dev fastfile notes; Steam discussions say Mod Tools ship only some assets"},
+    {"id": "models", "content": "Gun, box and streak models + textures", "location": "zone/*.ff (and/or Mod Tools model_export)", "format": "XModel / images in fastfiles", "reader": "TBD after recon; convert to NIF into a local cache folder", "used_by": ["weapons", "scorestreaks", "skyrim_forms"], "verified": false, "source": "web: Greyhound extracts XModels from a running BO3"},
+    {"id": "sounds", "content": "Gun fire/reload, box jingle, announcer, movement", "location": "sound/*.sabs, *.sabl", "format": "BO3 sound bank (FLAC inside, per community notes)", "reader": "TBD after recon; decode to the cache on first run", "used_by": ["weapons", "scorestreaks", "movement", "ui"], "verified": false, "source": "web: file-extensions.org on .sabs/.sabl"}
+  ]
+}

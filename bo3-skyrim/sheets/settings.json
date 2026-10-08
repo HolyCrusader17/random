@@ -1,0 +1,22 @@
+{
+  "sheet": "settings",
+  "about": "Keys and tunables. Written to Data/SKSE/Plugins/BO3Arsenal.ini on first run; players can edit them. Scancodes are DirectInput hex (same as ControlMap_Custom.txt).",
+  "columns": {
+    "id": {"type": "string", "desc": "Row id"},
+    "value": {"type": "any", "desc": "Default"},
+    "desc": {"type": "string", "desc": "What it is"},
+    "source": {"type": "string", "desc": "Where it came from"}
+  },
+  "rows": [
+    {"id": "key_gunsmith", "value": "0x40", "desc": "F6 opens the Gunsmith", "source": "user choice"},
+    {"id": "key_streak_1", "value": "0x41", "desc": "F7 calls streak 1", "source": "design"},
+    {"id": "key_streak_2", "value": "0x42", "desc": "F8 calls streak 2", "source": "design"},
+    {"id": "key_streak_3", "value": "0x43", "desc": "F9 calls streak 3", "source": "design"},
+    {"id": "key_streak_picker", "value": "0x44", "desc": "F10 picks streaks", "source": "design"},
+    {"id": "key_jump", "value": "from ControlMap 'Jump'", "desc": "Skyrim jump key (player's own binding)", "source": "game_info controls notes"},
+    {"id": "key_crouch", "value": "from ControlMap 'Sneak'", "desc": "Skyrim sneak key", "source": "game_info controls notes"},
+    {"id": "damage_scale", "value": 0.6, "desc": "BO3 damage -> Skyrim health points", "source": "design; tune in game"},
+    {"id": "box_cost", "value": 950, "desc": "Mystery Box price in gold", "source": "BO3 box price"},
+    {"id": "bo3_path_override", "value": "", "desc": "Optional BO3 folder if Steam's library list doesn't find it", "source": "design"}
+  ]
+}

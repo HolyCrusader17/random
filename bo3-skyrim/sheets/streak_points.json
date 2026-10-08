@@ -1,0 +1,20 @@
+{
+  "sheet": "streak_points",
+  "about": "Skyrim events that earn scorestreak points. Points reset on death (BO3 rule).",
+  "columns": {
+    "id": {"type": "string", "desc": "Row id"},
+    "event": {"type": "string", "desc": "Skyrim event"},
+    "points": {"type": "int", "desc": "Points"},
+    "hooks": {"type": "list:ref:hooks", "desc": "Hook that detects it"},
+    "implemented": {"type": "bool", "desc": "Code exists"},
+    "verified": {"type": "bool", "desc": "Seen working in game"},
+    "source": {"type": "string", "desc": "Where it came from"}
+  },
+  "rows": [
+    {"id": "kill", "event": "Player kills a hostile actor", "points": 100, "hooks": ["actor_death"], "implemented": false, "verified": false, "source": "BO3 TDM kill = 100; design"},
+    {"id": "headshot", "event": "Kill from a hit on the head node", "points": 50, "hooks": ["actor_death", "apply_damage"], "implemented": false, "verified": false, "source": "design"},
+    {"id": "dragon", "event": "Player kills a dragon", "points": 600, "hooks": ["actor_death"], "implemented": false, "verified": false, "source": "design"},
+    {"id": "multikill", "event": "Each extra kill within 1.5 s of the last", "points": 50, "hooks": ["actor_death"], "implemented": false, "verified": false, "source": "design"},
+    {"id": "reset", "event": "Player dies or loads a save: points go to 0", "points": 0, "hooks": ["player_death", "game_loaded"], "implemented": false, "verified": false, "source": "BO3 scorestreak rule"}
+  ]
+}

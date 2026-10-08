@@ -1,0 +1,36 @@
+{
+  "sheet": "attachments",
+  "about": "BO3 attachments. Which guns accept which attachment, and the attachment's own numbers, come from the player's BO3 weapon definitions; this sheet only names them and says which stats they change and which Gunsmith slot they take.",
+  "columns": {
+    "id": {"type": "string", "desc": "Row id"},
+    "name": {"type": "string", "desc": "Display name"},
+    "bo3_token": {"type": "string", "desc": "Attachment token in BO3 asset names"},
+    "slot": {"type": "enum:optic|barrel|mag|under|stock|perk|pap", "desc": "Gunsmith slot"},
+    "stats": {"type": "list:ref:stat_map", "desc": "Stats it changes"},
+    "verified": {"type": "bool", "desc": "Token and effect confirmed in BO3 files"},
+    "source": {"type": "string", "desc": "Where it came from"}
+  },
+  "rows": [
+    {"id": "reflex", "name": "Reflex", "bo3_token": "reflex", "slot": "optic", "stats": ["zoom", "ads_time"], "verified": false, "source": "guess from memory of BO3; confirm against the player's BO3 files (bo3_sources)"},
+    {"id": "holo", "name": "BOA 3", "bo3_token": "holo", "slot": "optic", "stats": ["zoom", "ads_time"], "verified": false, "source": "guess from memory of BO3; confirm against the player's BO3 files (bo3_sources)"},
+    {"id": "acog", "name": "Varix 3", "bo3_token": "acog", "slot": "optic", "stats": ["zoom", "ads_time"], "verified": false, "source": "guess from memory of BO3; confirm against the player's BO3 files (bo3_sources)"},
+    {"id": "dualoptic", "name": "Recon", "bo3_token": "dualoptic", "slot": "optic", "stats": ["zoom", "ads_time"], "verified": false, "source": "guess from memory of BO3; confirm against the player's BO3 files (bo3_sources)"},
+    {"id": "ir", "name": "Thermal", "bo3_token": "ir", "slot": "optic", "stats": ["zoom", "ads_time"], "verified": false, "source": "guess from memory of BO3; confirm against the player's BO3 files (bo3_sources)"},
+    {"id": "elo", "name": "ELO", "bo3_token": "elo", "slot": "optic", "stats": ["zoom", "ads_time"], "verified": false, "source": "guess from memory of BO3; confirm against the player's BO3 files (bo3_sources)"},
+    {"id": "swayreduc", "name": "Ballistics CPU?", "bo3_token": "swayreduc", "slot": "optic", "stats": ["zoom", "ads_time"], "verified": false, "source": "guess from memory of BO3; confirm against the player's BO3 files (bo3_sources)"},
+    {"id": "suppressed", "name": "Suppressor", "bo3_token": "suppressed", "slot": "barrel", "stats": ["damage_max", "range_max"], "verified": false, "source": "guess from memory of BO3; confirm against the player's BO3 files (bo3_sources)"},
+    {"id": "extbarrel", "name": "Long Barrel", "bo3_token": "extbarrel", "slot": "barrel", "stats": ["range_max", "range_min"], "verified": false, "source": "guess from memory of BO3; confirm against the player's BO3 files (bo3_sources)"},
+    {"id": "extclip", "name": "Extended Mags", "bo3_token": "extclip", "slot": "mag", "stats": ["clip_size"], "verified": false, "source": "guess from memory of BO3; confirm against the player's BO3 files (bo3_sources)"},
+    {"id": "fastreload", "name": "Fast Mags", "bo3_token": "fastreload", "slot": "mag", "stats": ["reload_time"], "verified": false, "source": "guess from memory of BO3; confirm against the player's BO3 files (bo3_sources)"},
+    {"id": "grip", "name": "Grip", "bo3_token": "grip", "slot": "under", "stats": ["recoil"], "verified": false, "source": "guess from memory of BO3; confirm against the player's BO3 files (bo3_sources)"},
+    {"id": "steadyaim", "name": "Laser Sight", "bo3_token": "steadyaim", "slot": "under", "stats": ["spread_hip"], "verified": false, "source": "guess from memory of BO3; confirm against the player's BO3 files (bo3_sources)"},
+    {"id": "stalker", "name": "Stock", "bo3_token": "stalker", "slot": "stock", "stats": ["ads_move_speed"], "verified": false, "source": "guess from memory of BO3; confirm against the player's BO3 files (bo3_sources)"},
+    {"id": "quickdraw", "name": "Quickdraw", "bo3_token": "quickdraw", "slot": "stock", "stats": ["ads_time"], "verified": false, "source": "guess from memory of BO3; confirm against the player's BO3 files (bo3_sources)"},
+    {"id": "rf", "name": "Rapid Fire", "bo3_token": "rf", "slot": "perk", "stats": ["fire_time"], "verified": false, "source": "guess from memory of BO3; confirm against the player's BO3 files (bo3_sources)"},
+    {"id": "fmj", "name": "FMJ", "bo3_token": "fmj", "slot": "perk", "stats": ["damage_max"], "verified": false, "source": "guess from memory of BO3; confirm against the player's BO3 files (bo3_sources)"},
+    {"id": "damage", "name": "High Caliber", "bo3_token": "damage", "slot": "perk", "stats": ["headshot_mult"], "verified": false, "source": "guess from memory of BO3; confirm against the player's BO3 files (bo3_sources)"},
+    {"id": "dw", "name": "Dual Wield", "bo3_token": "dw", "slot": "perk", "stats": ["fire_time"], "verified": false, "source": "guess from memory of BO3; confirm against the player's BO3 files (bo3_sources)"},
+    {"id": "fastburst", "name": "Burst?", "bo3_token": "fastburst?", "slot": "perk", "stats": ["fire_time"], "verified": false, "source": "guess from memory of BO3; confirm against the player's BO3 files (bo3_sources)"},
+    {"id": "pap", "name": "Pack-a-Punch", "bo3_token": "pap", "slot": "pap", "stats": ["damage_max", "clip_size"], "verified": false, "source": "BO3 Zombies upgraded weapon variant (bo3_upgraded_asset); design"}
+  ]
+}

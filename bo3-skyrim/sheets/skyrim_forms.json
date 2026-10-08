@@ -1,0 +1,26 @@
+{
+  "sheet": "skyrim_forms",
+  "about": "Records in the mod's own ESL plugin (BO3Arsenal.esp). Every BO3 gun is cloned at runtime from a template here, so the ESP stays small. No BO3 content is in the ESP.",
+  "columns": {
+    "id": {"type": "string", "desc": "Row id"},
+    "type": {"type": "string", "desc": "Record type"},
+    "editor_id": {"type": "string", "desc": "EditorID"},
+    "desc": {"type": "string", "desc": "What it is for"},
+    "verified": {"type": "bool", "desc": "Loads in game"},
+    "source": {"type": "string", "desc": "Where it came from"}
+  },
+  "rows": [
+    {"id": "tpl_rifle", "type": "WEAP", "editor_id": "BO3_TplRifle", "desc": "Two-handed crossbow-based template (crossbow anims for aim/hold)", "verified": false, "source": "design; crossbow base is the usual Skyrim gun route"},
+    {"id": "tpl_pistol", "type": "WEAP", "editor_id": "BO3_TplPistol", "desc": "One-handed template (crossbow anims until a pistol anim set exists)", "verified": false, "source": "design"},
+    {"id": "ammo_rifle", "type": "AMMO", "editor_id": "BO3_AmmoRifle", "desc": "Rifle rounds", "verified": false, "source": "design"},
+    {"id": "ammo_pistol", "type": "AMMO", "editor_id": "BO3_AmmoPistol", "desc": "Pistol/SMG rounds", "verified": false, "source": "design"},
+    {"id": "ammo_shell", "type": "AMMO", "editor_id": "BO3_AmmoShell", "desc": "Shotgun shells", "verified": false, "source": "design"},
+    {"id": "ammo_sniper", "type": "AMMO", "editor_id": "BO3_AmmoSniper", "desc": "Sniper rounds", "verified": false, "source": "design"},
+    {"id": "ammo_rocket", "type": "AMMO", "editor_id": "BO3_AmmoRocket", "desc": "Rockets", "verified": false, "source": "design"},
+    {"id": "ammo_special", "type": "AMMO", "editor_id": "BO3_AmmoSpecial", "desc": "Bolts/knives", "verified": false, "source": "design"},
+    {"id": "ammo_wonder", "type": "AMMO", "editor_id": "BO3_AmmoWonder", "desc": "Wonder weapon charge", "verified": false, "source": "design"},
+    {"id": "proj_bo3", "type": "PROJ", "editor_id": "BO3_Proj", "desc": "Projectile template; speed/gravity set per shot", "verified": false, "source": "design"},
+    {"id": "box_activator", "type": "ACTI", "editor_id": "BO3_MysteryBox", "desc": "Mystery Box activator; its mesh is converted from BO3's box model at runtime", "verified": false, "source": "design"},
+    {"id": "box_riverwood", "type": "REFR", "editor_id": "BO3_MysteryBoxRiverwood", "desc": "Placed box near the Riverwood Trader (cell RiverwoodExterior; coordinates to confirm in game)", "verified": false, "source": "user choice: Riverwood"}
+  ]
+}

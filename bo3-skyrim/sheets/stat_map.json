@@ -1,0 +1,35 @@
+{
+  "sheet": "stat_map",
+  "about": "Each BO3 weapon-definition number the mod reads and what it becomes in Skyrim. BO3 units are inches; 1 inch = 0.0254 m = 1.7778 Skyrim units (game_info: 1 unit = 0.0142875 m).",
+  "columns": {
+    "id": {"type": "string", "desc": "Row id"},
+    "bo3_field": {"type": "string", "desc": "Field in BO3's weapon definition"},
+    "skyrim_target": {"type": "string", "desc": "What it drives in Skyrim"},
+    "conversion": {"type": "string", "desc": "Formula"},
+    "verified": {"type": "bool", "desc": "Field name confirmed in BO3 files"},
+    "source": {"type": "string", "desc": "Where it came from"}
+  },
+  "rows": [
+    {"id": "damage_max", "bo3_field": "maxDamage", "skyrim_target": "hit damage", "conversion": "bo3 * settings.damage_scale", "verified": false, "source": "design; BO3 field name guess from memory of BO3; confirm against the player's BO3 files (bo3_sources)"},
+    {"id": "damage_min", "bo3_field": "minDamage", "skyrim_target": "hit damage at range_max", "conversion": "bo3 * settings.damage_scale", "verified": false, "source": "design; BO3 field name guess from memory of BO3; confirm against the player's BO3 files (bo3_sources)"},
+    {"id": "range_max", "bo3_field": "maxDamageRange", "skyrim_target": "falloff end", "conversion": "bo3_inches * 1.7778 (Skyrim units)", "verified": false, "source": "design; BO3 field name guess from memory of BO3; confirm against the player's BO3 files (bo3_sources)"},
+    {"id": "range_min", "bo3_field": "minDamageRange", "skyrim_target": "falloff start", "conversion": "bo3_inches * 1.7778", "verified": false, "source": "design; BO3 field name guess from memory of BO3; confirm against the player's BO3 files (bo3_sources)"},
+    {"id": "fire_time", "bo3_field": "fireTime", "skyrim_target": "seconds between shots", "conversion": "as is", "verified": false, "source": "design; BO3 field name guess from memory of BO3; confirm against the player's BO3 files (bo3_sources)"},
+    {"id": "clip_size", "bo3_field": "clipSize", "skyrim_target": "rounds per mag", "conversion": "as is", "verified": false, "source": "design; BO3 field name guess from memory of BO3; confirm against the player's BO3 files (bo3_sources)"},
+    {"id": "reload_time", "bo3_field": "reloadTime", "skyrim_target": "reload seconds", "conversion": "as is", "verified": false, "source": "design; BO3 field name guess from memory of BO3; confirm against the player's BO3 files (bo3_sources)"},
+    {"id": "spread_hip", "bo3_field": "hipSpreadMax", "skyrim_target": "hip spread degrees", "conversion": "as is", "verified": false, "source": "design; BO3 field name guess from memory of BO3; confirm against the player's BO3 files (bo3_sources)"},
+    {"id": "spread_ads", "bo3_field": "adsSpread", "skyrim_target": "ADS spread degrees", "conversion": "as is", "verified": false, "source": "design; BO3 field name guess from memory of BO3; confirm against the player's BO3 files (bo3_sources)"},
+    {"id": "headshot_mult", "bo3_field": "locationDamageMultipliers.head", "skyrim_target": "head hit multiplier", "conversion": "as is", "verified": false, "source": "design; BO3 field name guess from memory of BO3; confirm against the player's BO3 files (bo3_sources)"},
+    {"id": "pellet_count", "bo3_field": "shotCount", "skyrim_target": "pellets per shot", "conversion": "as is", "verified": false, "source": "design; BO3 field name guess from memory of BO3; confirm against the player's BO3 files (bo3_sources)"},
+    {"id": "projectile_speed", "bo3_field": "projectileSpeed", "skyrim_target": "projectile speed", "conversion": "bo3_inches_per_s * 1.7778", "verified": false, "source": "design; BO3 field name guess from memory of BO3; confirm against the player's BO3 files (bo3_sources)"},
+    {"id": "explosion_radius", "bo3_field": "explosionRadius", "skyrim_target": "explosion radius", "conversion": "bo3_inches * 1.7778", "verified": false, "source": "design; BO3 field name guess from memory of BO3; confirm against the player's BO3 files (bo3_sources)"},
+    {"id": "explosion_damage", "bo3_field": "explosionInnerDamage", "skyrim_target": "explosion damage", "conversion": "bo3 * settings.damage_scale", "verified": false, "source": "design; BO3 field name guess from memory of BO3; confirm against the player's BO3 files (bo3_sources)"},
+    {"id": "cone_angle", "bo3_field": "(wonder script bundle)", "skyrim_target": "cone half-angle degrees", "conversion": "as is", "verified": false, "source": "design; BO3 field name guess from memory of BO3; confirm against the player's BO3 files (bo3_sources)"},
+    {"id": "chain_count", "bo3_field": "(wonder script bundle)", "skyrim_target": "max chain targets", "conversion": "as is", "verified": false, "source": "design; BO3 field name guess from memory of BO3; confirm against the player's BO3 files (bo3_sources)"},
+    {"id": "chain_range", "bo3_field": "(wonder script bundle)", "skyrim_target": "chain jump range", "conversion": "bo3_inches * 1.7778", "verified": false, "source": "design; BO3 field name guess from memory of BO3; confirm against the player's BO3 files (bo3_sources)"},
+    {"id": "zoom", "bo3_field": "adsZoomFov", "skyrim_target": "ADS field of view", "conversion": "as is", "verified": false, "source": "design; BO3 field name guess from memory of BO3; confirm against the player's BO3 files (bo3_sources)"},
+    {"id": "ads_time", "bo3_field": "adsTransInTime", "skyrim_target": "ADS seconds", "conversion": "ms / 1000", "verified": false, "source": "design; BO3 field name guess from memory of BO3; confirm against the player's BO3 files (bo3_sources)"},
+    {"id": "recoil", "bo3_field": "gunKick*", "skyrim_target": "view kick", "conversion": "as is", "verified": false, "source": "design; BO3 field name guess from memory of BO3; confirm against the player's BO3 files (bo3_sources)"},
+    {"id": "ads_move_speed", "bo3_field": "adsMoveSpeedScale", "skyrim_target": "speed while ADS", "conversion": "as is", "verified": false, "source": "design; BO3 field name guess from memory of BO3; confirm against the player's BO3 files (bo3_sources)"}
+  ]
+}

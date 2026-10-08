@@ -1,0 +1,25 @@
+{
+  "sheet": "weapon_classes",
+  "about": "Gunsmith tabs. Every BO3 gun belongs to one. skyrim_template is the ESL form the gun is cloned from at runtime (skyrim_forms).",
+  "columns": {
+    "id": {"type": "string", "desc": "Row id"},
+    "name": {"type": "string", "desc": "Tab name in the Gunsmith"},
+    "order": {"type": "int", "desc": "Tab order"},
+    "skyrim_template": {"type": "ref:skyrim_forms", "desc": "Weapon form cloned for guns of this class"},
+    "ammo": {"type": "ref:skyrim_forms", "desc": "Ammo form this class uses"},
+    "default_fire": {"type": "ref:fire_logic", "desc": "Fire logic unless the weapon row overrides it"},
+    "verified": {"type": "bool", "desc": "Seen working in the running game"},
+    "source": {"type": "string", "desc": "Where it came from"}
+  },
+  "rows": [
+    {"id": "ar", "name": "Assault Rifles", "order": 1, "skyrim_template": "tpl_rifle", "ammo": "ammo_rifle", "default_fire": "hitscan", "verified": false, "source": "design"},
+    {"id": "smg", "name": "Submachine Guns", "order": 2, "skyrim_template": "tpl_rifle", "ammo": "ammo_pistol", "default_fire": "hitscan", "verified": false, "source": "design"},
+    {"id": "shotgun", "name": "Shotguns", "order": 3, "skyrim_template": "tpl_rifle", "ammo": "ammo_shell", "default_fire": "pellets", "verified": false, "source": "design"},
+    {"id": "lmg", "name": "Light Machine Guns", "order": 4, "skyrim_template": "tpl_rifle", "ammo": "ammo_rifle", "default_fire": "hitscan", "verified": false, "source": "design"},
+    {"id": "sniper", "name": "Sniper Rifles", "order": 5, "skyrim_template": "tpl_rifle", "ammo": "ammo_sniper", "default_fire": "hitscan", "verified": false, "source": "design"},
+    {"id": "pistol", "name": "Pistols", "order": 6, "skyrim_template": "tpl_pistol", "ammo": "ammo_pistol", "default_fire": "hitscan", "verified": false, "source": "design"},
+    {"id": "launcher", "name": "Launchers", "order": 7, "skyrim_template": "tpl_rifle", "ammo": "ammo_rocket", "default_fire": "projectile", "verified": false, "source": "design"},
+    {"id": "special", "name": "Specials", "order": 8, "skyrim_template": "tpl_rifle", "ammo": "ammo_special", "default_fire": "projectile", "verified": false, "source": "design"},
+    {"id": "wonder", "name": "Wonder Weapons", "order": 9, "skyrim_template": "tpl_rifle", "ammo": "ammo_wonder", "default_fire": "projectile", "verified": false, "source": "design"}
+  ]
+}

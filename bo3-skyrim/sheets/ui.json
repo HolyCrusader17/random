@@ -1,0 +1,20 @@
+{
+  "sheet": "ui",
+  "about": "Screens the mod draws (ImGui overlay on the game's D3D11 swap chain; BO3 fonts and icons read from the player's copy when available).",
+  "columns": {
+    "id": {"type": "string", "desc": "Row id"},
+    "what": {"type": "string", "desc": "What it shows / does"},
+    "open": {"type": "string", "desc": "How it opens (settings key id or trigger)"},
+    "hooks": {"type": "list:ref:hooks", "desc": "Hooks it needs"},
+    "implemented": {"type": "bool", "desc": "Code exists"},
+    "verified": {"type": "bool", "desc": "Seen working"},
+    "source": {"type": "string", "desc": "Where it came from"}
+  },
+  "rows": [
+    {"id": "gunsmith", "what": "Tabs per weapon class; pick a gun, fill attachment slots, Pack-a-Punch toggle for Zombies guns; 'Give' adds it to inventory with ammo", "open": "key_gunsmith", "hooks": ["present", "input_block", "give_item"], "implemented": false, "verified": false, "source": "design (user choice: free sandbox menu)"},
+    {"id": "mystery_box", "what": "Activating the box (950 gold) plays the BO3 box jingle and cycles guns, then offers one random mystery_box gun; 10% teddy bear: box vanishes and moves", "open": "activate box_riverwood", "hooks": ["activate", "give_item", "remove_gold", "present"], "implemented": false, "verified": false, "source": "design (user choice); 950 = BO3 box price"},
+    {"id": "streak_hud", "what": "Points bar with the three equipped streaks and their costs, bottom right, BO3 style", "open": "always while a BO3 gun is equipped", "hooks": ["present"], "implemented": false, "verified": false, "source": "design"},
+    {"id": "streak_picker", "what": "Choose the three equipped scorestreaks", "open": "key_streak_picker", "hooks": ["present", "input_block"], "implemented": false, "verified": false, "source": "design"},
+    {"id": "bo3_missing", "what": "If BO3 isn't found: one on-screen notice 'Call of Duty: Black Ops III was not found...' and no guns are offered", "open": "game_loaded when bo3_install is empty", "hooks": ["present", "game_loaded"], "implemented": false, "verified": false, "source": "Melty game_info rule for a secondary game"}
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "sheet": "fire_logic",
+  "about": "How a shot is resolved in Skyrim. Each row is one C++ fire routine. Uses BO3 numbers from stat_map.",
+  "columns": {
+    "id": {"type": "string", "desc": "Row id"},
+    "desc": {"type": "string", "desc": "What a shot does"},
+    "hooks": {"type": "list:ref:hooks", "desc": "Hooks the routine needs"},
+    "stats": {"type": "list:ref:stat_map", "desc": "BO3 stats it reads"},
+    "implemented": {"type": "bool", "desc": "Code exists"},
+    "verified": {"type": "bool", "desc": "Seen working in game"},
+    "source": {"type": "string", "desc": "Where it came from"}
+  },
+  "rows": [
+    {"id": "hitscan", "desc": "Ray from the camera along the aim (plus spread) to the first actor or surface; damage with range falloff", "hooks": ["attack_fire", "camera", "raycast", "apply_damage"], "stats": ["damage_max", "damage_min", "range_max", "range_min", "fire_time", "spread_hip", "spread_ads", "headshot_mult"], "implemented": false, "verified": false, "source": "design"},
+    {"id": "pellets", "desc": "hitscan repeated pellet_count times with shotgun spread", "hooks": ["attack_fire", "camera", "raycast", "apply_damage"], "stats": ["damage_max", "damage_min", "range_max", "range_min", "fire_time", "pellet_count", "spread_hip"], "implemented": false, "verified": false, "source": "design"},
+    {"id": "projectile", "desc": "Launch a Skyrim projectile (template proj_bo3) carrying BO3's speed, gravity and explosion radius", "hooks": ["attack_fire", "camera", "launch_projectile", "explosion"], "stats": ["damage_max", "projectile_speed", "explosion_radius", "explosion_damage", "fire_time"], "implemented": false, "verified": false, "source": "design"},
+    {"id": "beam", "desc": "Continuous beam (Zap guns, Staff of Lightning style) ticking damage at fire_time while held", "hooks": ["attack_fire", "camera", "raycast", "apply_damage"], "stats": ["damage_max", "range_max", "fire_time"], "implemented": false, "verified": false, "source": "design"},
+    {"id": "cone_blast", "desc": "Thundergun-style cone: every actor within range and angle is flung (Skyrim ragdoll push) and damaged", "hooks": ["attack_fire", "camera", "actors_in_cone", "push_actor", "apply_damage"], "stats": ["damage_max", "range_max", "cone_angle", "fire_time"], "implemented": false, "verified": false, "source": "design"},
+    {"id": "chain", "desc": "Wunderwaffe-style: hit one actor then arc to the nearest up to chain_count, with BO3's chain range", "hooks": ["attack_fire", "camera", "raycast", "actors_near", "apply_damage"], "stats": ["damage_max", "range_max", "chain_count", "chain_range", "fire_time"], "implemented": false, "verified": false, "source": "design"}
+  ]
+}
