@@ -74,7 +74,7 @@ namespace UKAudio
 
             var heartbeat = Expand(Setting("heartbeat_file"));
             var events = new EventTail(Expand(Setting("events_file")));
-            var gameProcess = Setting("game_process");
+            var gameProcesses = Setting("game_process").Split('|');
 
             var engine = new AudioEngine();
             engine.Start();
@@ -101,7 +101,7 @@ namespace UKAudio
                 {
                     lastBeat = now;
                     try { File.WriteAllText(heartbeat, ((long)(now - new DateTime(1970, 1, 1)).TotalSeconds).ToString()); } catch { }
-                    bool running = Process.GetProcessesByName(gameProcess).Length > 0;
+                    bool running = gameProcesses.Any(p => Process.GetProcessesByName(p).Length > 0);
                     if (running) lastSeenGame = now;
                     if (lastSeenGame == null && (now - started).TotalSeconds > 180) { Log("game never started; exiting"); break; }
                     if (lastSeenGame != null && (now - lastSeenGame.Value).TotalSeconds > 10) { Log("game closed; exiting"); break; }

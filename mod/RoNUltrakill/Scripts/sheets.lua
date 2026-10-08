@@ -92,7 +92,7 @@ S.settings = {
   { id = "settings_file", value = "{localappdata}/RoNUltrakill/settings.cfg", desc = "Melty writes ULTRAKILL_DIR here before every Play" },
   { id = "events_file", value = "{localappdata}/RoNUltrakill/events.log", desc = "Lua appends, helper tails" },
   { id = "heartbeat_file", value = "{localappdata}/RoNUltrakill/helper.alive", desc = "Helper touches it every second" },
-  { id = "game_process", value = "ReadyOrNot-Win64-Shipping", desc = "Helper exits when this process is gone" },
+  { id = "game_process", value = "ReadyOrNotSteam-Win64-Shipping|ReadyOrNot-Win64-Shipping", desc = "Helper exits when none of these processes ('|'-separated) is running; the Steam build's exe is ReadyOrNotSteam-Win64-Shipping.exe" },
 }
 S.settings_by_id = {}
 for _, r in ipairs(S.settings) do S.settings_by_id[r.id] = r end

@@ -107,7 +107,7 @@ namespace UKAudio
             new SettingsRow { id = "settings_file", value = "{localappdata}/RoNUltrakill/settings.cfg", desc = "Melty writes ULTRAKILL_DIR here before every Play" },
             new SettingsRow { id = "events_file", value = "{localappdata}/RoNUltrakill/events.log", desc = "Lua appends, helper tails" },
             new SettingsRow { id = "heartbeat_file", value = "{localappdata}/RoNUltrakill/helper.alive", desc = "Helper touches it every second" },
-            new SettingsRow { id = "game_process", value = "ReadyOrNot-Win64-Shipping", desc = "Helper exits when this process is gone" },
+            new SettingsRow { id = "game_process", value = "ReadyOrNotSteam-Win64-Shipping|ReadyOrNot-Win64-Shipping", desc = "Helper exits when none of these processes ('|'-separated) is running; the Steam build's exe is ReadyOrNotSteam-Win64-Shipping.exe" },
         };
     }
 }
