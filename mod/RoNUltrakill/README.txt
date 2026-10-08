@@ -5,7 +5,7 @@ Needs: Ready or Not, ULTRAKILL (its music and sounds are read from your own inst
 In a raid:
   F7   cycle mode: CLEAN -> ULTRAKILL RULES -> POWER (shown above the meter)
   F8   show / hide the meter
-  F10  write a diagnostic report to UE4SS.log
+  F9   write a diagnostic report to UE4SS.log
 
 CLEAN            arrests, non-lethal takedowns and fast clears earn the most style; an unauthorized kill drops you to D
 ULTRAKILL RULES  kills, headshots and multi-kills feed the meter; your score is the best rank you reach

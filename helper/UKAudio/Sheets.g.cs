@@ -93,7 +93,7 @@ namespace UKAudio
         {
             new SettingsRow { id = "hotkey_mode", value = "F7", desc = "Cycle Clean → ULTRAKILL Rules → Power" },
             new SettingsRow { id = "hotkey_hud", value = "F8", desc = "Show or hide the meter" },
-            new SettingsRow { id = "hotkey_recon", value = "F10", desc = "Write classes, hook results and penalty functions to UE4SS.log" },
+            new SettingsRow { id = "hotkey_recon", value = "F9", desc = "(F10-F12 and ~ are UE4SS ConsoleEnabler console keys) Write classes, hook results and penalty functions to UE4SS.log" },
             new SettingsRow { id = "poll_ms", value = "100", desc = "How often the mod reads the game" },
             new SettingsRow { id = "fire_window_s", value = "0.8", desc = "A death this soon after the player fired counts as theirs" },
             new SettingsRow { id = "aim_cone_deg", value = "10", desc = "Victim must be this close to the crosshair to be the player's kill" },
@@ -105,6 +105,7 @@ namespace UKAudio
             new SettingsRow { id = "feed_lines", value = "5", desc = "Lines kept in the HUD feed" },
             new SettingsRow { id = "data_dir", value = "{localappdata}/RoNUltrakill", desc = "Folder for settings.cfg, events.log, clip-index.txt, logs" },
             new SettingsRow { id = "settings_file", value = "{localappdata}/RoNUltrakill/settings.cfg", desc = "Melty writes ULTRAKILL_DIR here before every Play" },
+            new SettingsRow { id = "settings_file_mod", value = "{mod}/settings.cfg", desc = "Read when settings_file has no ULTRAKILL_DIR (manual installs; a launcher whose %LOCALAPPDATA% writes are virtualized)" },
             new SettingsRow { id = "events_file", value = "{localappdata}/RoNUltrakill/events.log", desc = "Lua appends, helper tails" },
             new SettingsRow { id = "heartbeat_file", value = "{localappdata}/RoNUltrakill/helper.alive", desc = "Helper touches it every second" },
             new SettingsRow { id = "music_pair_strip", value = "(?i)\\b(clean|battle)\\b", desc = "Removed from music clip names to pair a clean track with its battle version ('0-2 Clean' <-> '0-2')" },

@@ -61,6 +61,7 @@ local function character(class, x, y)
     function c:IsSurrendered() return self.surrendered end
     function c:IsIncapacitated() return self.incap end
     function c:IsDeadNotUnconscious() return self.dead end
+    function c:IsPlayerControlled() return self.__class == "PlayerCharacter_C" end
     c.Mesh = obj("SkeletalMeshComponent", {})
     c.Mesh.GlobalAnimRateScale = 1.0
     function c.Mesh:DoesSocketExist(n) return n == "head" end
@@ -95,11 +96,14 @@ chars[#chars + 1] = civ
 chars[#chars + 1] = player
 
 local binds = {}
-Key = { F7 = "F7", F8 = "F8", F10 = "F10" }
+Key = { F7 = "F7", F8 = "F8", F9 = "F9" }
 function RegisterKeyBind(k, fn) binds[k] = fn end
 function FName(s) return s end
 function FText(s) return { text = s } end
-function FindAllOf(c) if c == "Character" then return chars end end
+function FindAllOf(c)
+    if c == "Character" then return chars end
+    if c == "PlayerController" then return { pc } end
+end
 function FindFirstOf(c)
     if c == "GameStateBase" then return gs end
     if c == "GameInstance" then return obj("GameInstance", {}) end
@@ -224,8 +228,8 @@ binds.F8(); step(1)
 check(hud_text.visibility == 1, "F8 hides the meter")
 binds.F8(); step(1)
 check(hud_text.visibility == 4, "F8 shows it again")
-binds.F10(); step(1)
-check(logged("penalty_suppress candidate: Function /Script/ReadyOrNot.Scoring:ApplyUnauthorizedPenalty"), "F10 recon lists penalty functions")
+binds.F9(); step(1)
+check(logged("penalty_suppress candidate: Function /Script/ReadyOrNot.Scoring:ApplyUnauthorizedPenalty"), "F9 recon lists penalty functions")
 check(logged("hook state_arrested ok via IsArrested (call)"), "hook results are logged for verification")
 map = "Station"; step(1)
 check(has_event("mission_end"), "map change ends the mission and tells the helper")

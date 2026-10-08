@@ -23,8 +23,8 @@ started by Melty (`recipe.together`) with `{game:ultrakill}`; Melty writes `ULTR
 ## In-game checklist (on the creator's PC)
 1. Launch from Melty; `UE4SS.log` shows `[RoNUK] loaded` and `style meter built`; meter visible top-right.
 2. Start a raid; the log lists `character class ... -> suspect/civilian/swat`. Fix `class_*` candidates if needed.
-3. Arrest, take down, kill: log shows `hook state_* ok via <name>`; fix candidates for any `NOT SEEN` (F10).
+3. Arrest, take down, kill: log shows `hook state_* ok via <name>`; fix candidates for any `NOT SEEN` (F9).
 4. `%LOCALAPPDATA%/RoNUltrakill/helper.log`: index count, `clip-choices.txt` sfx + clean/battle pairs; music audible; rank sounds play. Adjust `sheets/audio.json` regexes from `clip-index.txt`.
 5. F7 through all three modes; Power speeds you up; F8 hides the meter.
-6. F10: note `penalty_suppress candidate` functions for the next update.
+6. F9: note `penalty_suppress candidate` functions for the next update.
 7. Capture a screenshot of the meter in a raid for the listing.

@@ -24,8 +24,8 @@ end)()
 
 local function read_kv(file)
     local t = {}
-    local f = io.open(file, "r")
-    if not f then return t end
+    local f, err = io.open(file, "r")
+    if not f then log("cannot read " .. file .. ": " .. tostring(err)); return t end
     for line in f:lines() do
         local k, v = line:match("^%s*([%w_]+)%s*=%s*(.-)%s*$")
         if k then t[k] = v end
@@ -35,10 +35,14 @@ local function read_kv(file)
 end
 
 local seq = 0
+local emit_failed = false
 local function emit(kind, arg)
     -- one line per event, tailed by UKAudio.exe; the first write of a game session empties the file
-    local f = io.open(path("events_file"), seq == 0 and "w" or "a")
-    if not f then return end
+    local f, err = io.open(path("events_file"), seq == 0 and "w" or "a")
+    if not f then
+        if not emit_failed then emit_failed = true; log("cannot write events: " .. tostring(err)) end
+        return
+    end
     seq = seq + 1
     f:write(string.format("%d\t%s\t%s\n", seq, kind, arg or ""))
     f:close()
@@ -62,7 +66,9 @@ local function ensure_helper()
     local f = io.open(exe, "rb")
     if not f then log("audio helper not found at " .. exe); return end
     f:close()
-    local uk = read_kv(path("settings_file")).ULTRAKILL_DIR or ""
+    local uk = read_kv(path("settings_file")).ULTRAKILL_DIR
+        or read_kv((cfg("settings_file_mod"):gsub("{mod}", MOD_DIR))).ULTRAKILL_DIR or ""
+    log("ULTRAKILL folder: " .. (uk ~= "" and uk or "(none)"))
     local cmd = string.format('start "" "%s" --ultrakill "%s"', exe:gsub("/", "\\"), uk)
     log("starting audio helper: " .. cmd)
     os.execute(cmd)
@@ -620,11 +626,24 @@ end
 local last_t = nil
 local err_count = 0
 
+-- UE4SS 3.0.1's UEHelpers.GetPlayerController calls an undefined global (Print) or errors while no pawn
+-- exists (main menu, loading), so the mod finds the local player's controller itself.
+local cached_pc = nil
+local function player_controller()
+    if valid(cached_pc) and valid(cached_pc.Pawn) then return cached_pc end
+    cached_pc = nil
+    for _, c in ipairs(FindAllOf("PlayerController") or {}) do
+        local ok, mine = pcall(function() return valid(c) and valid(c.Pawn) and c.Pawn:IsPlayerControlled() end)
+        if ok and mine then cached_pc = c; break end
+    end
+    return cached_pc
+end
+
 local function tick()
     tick_clock = tick_clock + cfg("poll_ms") / 1000
-    local pc = UEHelpers.GetPlayerController()
+    local pc = player_controller()
     if not valid(pc) then return end -- main menu
-    note_ok("player", "call", "GetPlayerController")
+    note_ok("player", "find_all", "PlayerController")
     on_map(pc)
     if want_mode_switch then want_mode_switch = false; switch_mode() end
     if want_recon then want_recon = false; recon() end
@@ -642,6 +661,7 @@ local function tick()
 end
 
 log("loaded; " .. #S.ranks .. " ranks, " .. #S.modes .. " modes, " .. #S.style_events .. " style events")
+log("data dir " .. path("data_dir") .. ", mod dir " .. MOD_DIR)
 emit("hello", "lua")
 ensure_helper()
 emit("mode", mode().id)

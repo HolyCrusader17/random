@@ -22,7 +22,7 @@ S.hooks = {
   { id = "state_incapacitated", kind = "game", method = "call_or_property", target = "Character", candidates = {"IsIncapacitated", "bIsIncapacitated", "bIncapacitated"}, used_by = "takedown", implemented = true, verified = false, source = "guess" },
   { id = "health_props", kind = "game", method = "property", target = "Character", candidates = {"Health", "CurrentHealth"}, used_by = "state_dead fallback, player_health", implemented = true, verified = false, source = "guess" },
   { id = "player_health", kind = "game", method = "property", target = "player Pawn", candidates = {"Health", "CurrentHealth"}, used_by = "hit_taken, power_absorb_hit", implemented = true, verified = false, source = "same names as health_props, read on the player" },
-  { id = "player", kind = "engine", method = "call", target = "UEHelpers", candidates = {"GetPlayerController"}, used_by = "everything", implemented = true, verified = false, source = "game_info: UEHelpers.GetPlayerController(), .Pawn" },
+  { id = "player", kind = "engine", method = "call", target = "FindAllOf", candidates = {"PlayerController"}, used_by = "everything", implemented = true, verified = false, source = "first PlayerController whose Pawn IsPlayerControlled; UE4SS 3.0.1 UEHelpers.GetPlayerController calls an undefined Print and errors with no pawn (seen in RoN UE4SS.log)" },
   { id = "camera", kind = "engine", method = "call", target = "PlayerCameraManager", candidates = {"GetCameraLocation", "GetCameraRotation"}, used_by = "aim attribution", implemented = true, verified = false, source = "game_info camera notes" },
   { id = "fire_input", kind = "engine", method = "call", target = "PlayerController", candidates = {"IsInputKeyDown:LeftMouseButton", "IsInputKeyDown:Gamepad_RightTrigger"}, used_by = "kill / takedown attribution", implemented = true, verified = false, source = "APlayerController::IsInputKeyDown (engine)" },
   { id = "aim_head", kind = "engine", method = "socket", target = "Character.Mesh", candidates = {"head", "Head", "neck_01"}, used_by = "headshot", implemented = true, verified = false, source = "UE mannequin bone names; check the log" },
@@ -33,8 +33,8 @@ S.hooks = {
   { id = "hud_widget", kind = "engine", method = "call", target = "UMG", candidates = {"/Script/UMG.UserWidget", "/Script/UMG.WidgetTree", "/Script/UMG.CanvasPanel", "/Script/UMG.TextBlock", "/Script/UMG.ProgressBar"}, used_by = "the meter", implemented = true, verified = false, source = "StaticConstructObject of stock UMG classes, no editor" },
   { id = "key_mode", kind = "ue4ss", method = "keybind", target = "RegisterKeyBind", candidates = {"F7"}, used_by = "mode switch", implemented = true, verified = false, source = "settings.hotkey_mode" },
   { id = "key_hud", kind = "ue4ss", method = "keybind", target = "RegisterKeyBind", candidates = {"F8"}, used_by = "show/hide meter", implemented = true, verified = false, source = "settings.hotkey_hud" },
-  { id = "key_recon", kind = "ue4ss", method = "keybind", target = "RegisterKeyBind", candidates = {"F10"}, used_by = "dump classes and penalty functions to UE4SS.log", implemented = true, verified = false, source = "settings.hotkey_recon" },
-  { id = "penalty_suppress", kind = "game", method = "recon", target = "UFunction names", candidates = {"Penalt", "Unauthori", "ROE"}, used_by = "modes.suppress_ron_penalties", implemented = false, verified = false, source = "unknown until the F10 recon lists Ready or Not's penalty functions; v1 logs them only" },
+  { id = "key_recon", kind = "ue4ss", method = "keybind", target = "RegisterKeyBind", candidates = {"F9"}, used_by = "dump classes and penalty functions to UE4SS.log", implemented = true, verified = false, source = "settings.hotkey_recon" },
+  { id = "penalty_suppress", kind = "game", method = "recon", target = "UFunction names", candidates = {"Penalt", "Unauthori", "ROE"}, used_by = "modes.suppress_ron_penalties", implemented = false, verified = false, source = "unknown until the F9 recon lists Ready or Not's penalty functions; v1 logs them only" },
 }
 S.hooks_by_id = {}
 for _, r in ipairs(S.hooks) do S.hooks_by_id[r.id] = r end
@@ -78,7 +78,7 @@ for _, r in ipairs(S.ranks) do S.ranks_by_id[r.id] = r end
 S.settings = {
   { id = "hotkey_mode", value = "F7", desc = "Cycle Clean → ULTRAKILL Rules → Power" },
   { id = "hotkey_hud", value = "F8", desc = "Show or hide the meter" },
-  { id = "hotkey_recon", value = "F10", desc = "Write classes, hook results and penalty functions to UE4SS.log" },
+  { id = "hotkey_recon", value = "F9", desc = "(F10-F12 and ~ are UE4SS ConsoleEnabler console keys) Write classes, hook results and penalty functions to UE4SS.log" },
   { id = "poll_ms", value = 100, desc = "How often the mod reads the game" },
   { id = "fire_window_s", value = 0.8, desc = "A death this soon after the player fired counts as theirs" },
   { id = "aim_cone_deg", value = 10, desc = "Victim must be this close to the crosshair to be the player's kill" },
@@ -90,6 +90,7 @@ S.settings = {
   { id = "feed_lines", value = 5, desc = "Lines kept in the HUD feed" },
   { id = "data_dir", value = "{localappdata}/RoNUltrakill", desc = "Folder for settings.cfg, events.log, clip-index.txt, logs" },
   { id = "settings_file", value = "{localappdata}/RoNUltrakill/settings.cfg", desc = "Melty writes ULTRAKILL_DIR here before every Play" },
+  { id = "settings_file_mod", value = "{mod}/settings.cfg", desc = "Read when settings_file has no ULTRAKILL_DIR (manual installs; a launcher whose %LOCALAPPDATA% writes are virtualized)" },
   { id = "events_file", value = "{localappdata}/RoNUltrakill/events.log", desc = "Lua appends, helper tails" },
   { id = "heartbeat_file", value = "{localappdata}/RoNUltrakill/helper.alive", desc = "Helper touches it every second" },
   { id = "music_pair_strip", value = "(?i)\\b(clean|battle)\\b", desc = "Removed from music clip names to pair a clean track with its battle version ('0-2 Clean' <-> '0-2')" },

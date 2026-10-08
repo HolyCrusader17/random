@@ -54,7 +54,9 @@ $hash = (Get-FileHash $zip -Algorithm SHA256).Hash.ToLower()
 
 if ($Install) {
     $dest = Join-Path $GameDir "ReadyOrNot/Binaries/Win64/Mods/RoNUltrakill"
+    $keep = if (Test-Path "$dest/settings.cfg") { Get-Content -Raw "$dest/settings.cfg" }
     if (Test-Path $dest) { Remove-Item -Recurse -Force $dest }
     Copy-Item -Recurse "$mod" $dest
+    if ($keep) { Set-Content -NoNewline -Encoding ascii "$dest/settings.cfg" $keep }
     "installed to $dest"
 }

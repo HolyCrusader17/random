@@ -51,12 +51,16 @@ namespace UKAudio
 
         static string ReadUltrakillDirFromSettings()
         {
-            var file = Expand(Setting("settings_file"));
-            if (!File.Exists(file)) return null;
-            foreach (var line in File.ReadAllLines(file))
+            // UKAudio.exe lives in <mod>/bin, so {mod} is its parent folder
+            var mod = Path.GetDirectoryName(AppDomain.CurrentDomain.BaseDirectory.TrimEnd(Path.DirectorySeparatorChar));
+            foreach (var file in new[] { Expand(Setting("settings_file")), Expand(Setting("settings_file_mod").Replace("{mod}", mod)) })
             {
-                int eq = line.IndexOf('=');
-                if (eq > 0 && line.Substring(0, eq).Trim() == "ULTRAKILL_DIR") return line.Substring(eq + 1).Trim();
+                if (!File.Exists(file)) continue;
+                foreach (var line in File.ReadAllLines(file))
+                {
+                    int eq = line.IndexOf('=');
+                    if (eq > 0 && line.Substring(0, eq).Trim() == "ULTRAKILL_DIR") return line.Substring(eq + 1).Trim();
+                }
             }
             return null;
         }

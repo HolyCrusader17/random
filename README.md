@@ -17,7 +17,7 @@ your rank climbs.
 | ULTRAKILL Rules | kills, headshots, multi-kills | score = best rank reached |
 | Power | everything | rank speeds up movement and reloads; at ULTRAKILL rank the next hit is cancelled |
 
-F8 shows/hides the meter, F10 writes a diagnostic report to `UE4SS.log`.
+F8 shows/hides the meter, F9 writes a diagnostic report to `UE4SS.log`.
 
 ## How it's built
 - `sheets/*.json` are the source of truth: ranks, modes, style events, hooks into the game, audio, music
@@ -36,7 +36,7 @@ F8 shows/hides the meter, F10 writes a diagnostic report to `UE4SS.log`.
 ## Status
 Version 0.1.0 is **built but not yet tested in the real game**. The class and property names Ready or Not
 uses are tried from candidate lists and logged; see `MODLOG.md` for the in-game checklist. Suppressing
-Ready or Not's own unauthorized-force penalties in ULTRAKILL Rules is not in v1 (F10 lists the candidate
+Ready or Not's own unauthorized-force penalties in ULTRAKILL Rules is not in v1 (F9 lists the candidate
 functions for a later update). Blood-is-fuel healing and parry are planned for later updates.
 
 ## License
