@@ -12,6 +12,8 @@
     {"id": "hotkey_recon",       "value": "F9",  "desc": "(F10-F12 and ~ are UE4SS ConsoleEnabler console keys) Write classes, hook results and penalty functions to UE4SS.log"},
     {"id": "trace_steps",        "value": true,  "desc": "Log each engine step once before it first runs, so a crash names its call in UE4SS.log"},
     {"id": "recon_member_words", "value": "Health|Dead|Death|Arrest|Restrain|Surrender|Incap|Stun|Damage", "desc": "Recon lists the player pawn's properties and functions containing these ('|'-separated)"},
+    {"id": "load_resume_ms",     "value": 2000,  "desc": "After a map has loaded, wait this long before reading the new world"},
+    {"id": "load_timeout_s",     "value": 30,    "desc": "Resume anyway if no 'map loaded' hook fired this long (in game-thread time) after a load started"},
     {"id": "poll_ms",            "value": 100,   "desc": "How often the mod reads the game"},
     {"id": "fire_window_s",      "value": 0.8,   "desc": "A death this soon after the player fired counts as theirs"},
     {"id": "aim_cone_deg",       "value": 10,    "desc": "Victim must be this close to the crosshair to be the player's kill"},

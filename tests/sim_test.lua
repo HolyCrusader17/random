@@ -100,7 +100,9 @@ Key = { F7 = "F7", F8 = "F8", F9 = "F9" }
 function RegisterKeyBind(k, fn) binds[k] = fn end
 function FName(s) return s end
 function FText(s) return { text = s } end
+local world_reads = 0
 function FindAllOf(c)
+    world_reads = world_reads + 1
     if c == "Character" then return chars end
     if c == "PlayerController" then return { pc } end
 end
@@ -119,6 +121,9 @@ end
 local loop_fn
 function LoopAsync(ms, fn) loop_fn = fn end
 function ExecuteInGameThread(fn) fn() end
+local load_hooks = {}
+function RegisterLoadMapPreHook(fn) load_hooks.pre = fn end
+function RegisterLoadMapPostHook(fn) load_hooks.post = fn end
 
 local logs = {}
 local real_print = print
@@ -228,6 +233,15 @@ map = "Station"; step(1)
 check(has_event("mission_end"), "map change ends the mission and tells the helper")
 check((hud_text["RoNUK_banner"] or ""):find("BEST RANK ULTRAKILL", 1, true) ~= nil, "end banner shows the best rank: " .. tostring(hud_text["RoNUK_banner"]))
 check(not logged("event level_clear +400"), "no free 'area secured' on the next map before anyone is neutralized")
+
+real_print("== map loads")
+load_hooks.pre(); local reads = world_reads; step(30)
+check(world_reads == reads, "no world reads while a map is loading")
+map = "RIDGELINE"; load_hooks.post(); step(5)
+check(world_reads == reads, "... nor right after it has loaded")
+step(25)
+check(world_reads > reads and logged("map RIDGELINE"), "reading resumes shortly after the load")
+check(hud_text.visibility == 4, "the meter is rebuilt on the new map")
 
 real_print(fails == 0 and "ALL PASSED" or (fails .. " FAILED"))
 os.exit(fails == 0 and 0 or 1)
