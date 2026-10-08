@@ -121,15 +121,18 @@ end
 local loop_fn
 function LoopAsync(ms, fn) loop_fn = fn end
 function ExecuteInGameThread(fn) fn() end
-local load_hooks = {}
-function RegisterLoadMapPreHook(fn) load_hooks.pre = fn end
-function RegisterLoadMapPostHook(fn) load_hooks.post = fn end
 
 local logs = {}
 local real_print = print
 print = function(s) logs[#logs + 1] = s; if os.getenv("SIM_VERBOSE") then real_print((s:gsub("\n$", ""))) end end
 
-function pc:GetWorld() return { GetFName = function() return { ToString = function() return map end } end } end
+local world_id = 1
+function pc:GetWorld()
+    return {
+        GetFName = function() return { ToString = function() return map end } end,
+        GetAddress = function() return world_id end,
+    }
+end
 
 ---------------------------------------------------------------------------------------------- run
 dofile(here .. "/mod/RoNUltrakill/Scripts/main.lua")
@@ -161,7 +164,7 @@ end
 local function rank() return hud_text["RoNUK_letter"] end
 
 real_print("== start")
-step(3)
+step(25) -- the first world is read after settings.load_resume_ms
 check(hud_text["RoNUK_mode"] == "CLEAN", "starts in Clean mode, shown on the meter")
 check(rank() == "D", "starts at rank D")
 check(has_event("hello", "lua") and has_event("music", "calm") and has_event("mission_start", "RIDGELINE"), "helper told: hello, calm music, mission start")
@@ -235,11 +238,10 @@ check((hud_text["RoNUK_banner"] or ""):find("BEST RANK ULTRAKILL", 1, true) ~= n
 check(not logged("event level_clear +400"), "no free 'area secured' on the next map before anyone is neutralized")
 
 real_print("== map loads")
-load_hooks.pre(); local reads = world_reads; step(30)
-check(world_reads == reads, "no world reads while a map is loading")
-map = "RIDGELINE"; load_hooks.post(); step(5)
-check(world_reads == reads, "... nor right after it has loaded")
-step(25)
+world_id = 2; map = "RIDGELINE"; step(1); local reads = world_reads; step(10)
+check(world_reads == reads, "a new world is not read right after the load")
+check(logged("new world: reading it in"), "the world change is noticed")
+step(15)
 check(world_reads > reads and logged("map RIDGELINE"), "reading resumes shortly after the load")
 check(hud_text.visibility == 4, "the meter is rebuilt on the new map")
 

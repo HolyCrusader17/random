@@ -704,52 +704,33 @@ end
 ---------------------------------------------------------------------------------------------------
 -- Map loads: the mod keeps its hands off the world while a level is torn down and loaded
 ---------------------------------------------------------------------------------------------------
+-- UE4SS 3.0.1's RegisterLoadMapPreHook/PostHook threw inside the engine at startup in Ready or Not, so a
+-- load is noticed instead: the player controller lives in a different UWorld after every map load.
 local tick_n = 0
-local loading = false
-local resume_at = 0 -- tick number after which a freshly loaded world is read again
+local resume_at = 0   -- tick number after which a freshly loaded world is read again
+local world_addr = nil
 
-local loading_ticks = 0
-local function on_load_start()
-    loading, loading_ticks = true, 0
+local function world_changed(pc)
+    local ok, addr = pcall(function() return pc:GetWorld():GetAddress() end)
+    if not ok or addr == nil or addr == world_addr then return false end
+    note_ok("world_change", "call", "GetWorld():GetAddress()")
+    world_addr = addr
     cached_pc, tracked, crumbs = nil, {}, {}
     HUD.widget, HUD.parts = nil, {}
     M.buffed_pawn, M.player_health = nil, nil
-    log("map load: paused")
-end
-
-local function on_load_done(which)
-    if not loading and resume_at > tick_n then return end
-    loading = false
     resume_at = tick_n + math.ceil(cfg("load_resume_ms") / cfg("poll_ms"))
-    log("map load done (" .. which .. "): resuming shortly")
-end
-
-do
-    local row = hookrow("load_map")
-    for i, name in ipairs(row.candidates) do
-        local register = _G[name]
-        if type(register) == "function" then
-            local ok, err = pcall(register, function() if i == 1 then on_load_start() else on_load_done(name) end end)
-            if ok then note_ok("load_map", "hook", name) else log("cannot register " .. name .. ": " .. tostring(err)) end
-        else
-            log(name .. " not available in this UE4SS")
-        end
-    end
+    log("new world: reading it in " .. cfg("load_resume_ms") .. " ms")
+    return true
 end
 
 local function tick()
     tick_n = tick_n + 1
-    if loading then
-        -- ticks only advance once the game thread is free again, so a missing "done" hook can't stall us
-        loading_ticks = loading_ticks + 1
-        if loading_ticks * cfg("poll_ms") < cfg("load_timeout_s") * 1000 then return end
-        on_load_done("timeout")
-    end
     if tick_n < resume_at then return end
     if cfg("trace_steps") and (tick_n <= 3 or tick_n % 50 == 0) then log("trace tick " .. tick_n) end
     tick_clock = tick_clock + cfg("poll_ms") / 1000
     local pc = player_controller()
     if not valid(pc) then return end -- main menu
+    if world_changed(pc) then return end
     note_ok("player", "find_all", "PlayerController")
     crumb("tick: on_map")
     on_map(pc)
